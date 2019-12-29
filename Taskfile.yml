@@ -1,0 +1,35 @@
+# https://taskfile.dev
+
+version: '2'
+
+tasks:
+
+  # create ssh-key-pair named key and key.pub
+  sshkeygen:
+    cmds:
+      - cd ./pxe/containerdata; ssh-keygen -b 4096 -t rsa -f ./key -N "" <<< y
+      - cd ./pxe/containerdata; cp ./key.pub ./public/key.pub
+
+  # download netinst iso
+  load:netboot:
+    cmds:
+      - rm -dr ./pxe/containerdata/public/netboot
+      - mkdir ./pxe/containerdata/public/netboot
+      - cd ./pxe/containerdata/public/netboot; wget http://ftp.nl.debian.org/debian/dists/buster/main/installer-amd64/current/images/netboot/netboot.tar.gz -O ./debian-netboot.tar.gz
+      - cd ./pxe/containerdata/public/netboot; tar -xvzf ./debian-netboot.tar.gz
+      - cd ./pxe/containerdata/public/netboot; rm ./debian-netboot.tar.gz
+
+  # build pxe-server with ansible docker image
+  build:pxeansible:
+    cmds:
+      - cd ./pxe; docker build . -t container_pxeansible
+
+  # rebuild pxe-server with ansible docker image
+  rebuild:pxeansible:
+    cmds:
+      - cd ./pxe; docker build . -t container_pxeansible --no-cache
+  
+  # run pxe-server with ansible docker image
+  run:pxeansible:
+    cmds:
+      - cd ./pxe; docker run --rm --cap-add=NET_ADMIN --net=host -it -v $PWD/containerdata:/container container_pxeansible
