@@ -9,9 +9,13 @@ tasks:
     cmds:
       - cd ./pxe/containerdata; ssh-keygen -b 4096 -t rsa -f ./key -N "" <<< y
       - cd ./pxe/containerdata; cp ./key.pub ./public/key.pub
+  # load ssh-public-key from github
+  sshkeyload:
+    cmds:
+      - cd ./pxe/containerdata/public; wget https://github.com/tillhoff.keys -O key.pub
 
   # download netinst iso
-  load:netboot:
+  reload:netboot:
     cmds:
       - rm -dr ./pxe/containerdata/public/netboot
       - mkdir ./pxe/containerdata/public/netboot
