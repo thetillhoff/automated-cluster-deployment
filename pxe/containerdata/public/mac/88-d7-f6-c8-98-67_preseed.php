@@ -14,7 +14,8 @@
     # best source so far: https://gist.github.com/robinsmidsrod/2234639
 
     $username = "enforge";
-    $sshkeyurl = "https://github.com/tillhoff.keys";
+    $sshkey = str_replace(' ','\ ',file_get_contents("/container/public/key.pub"));
+    $sshurl = "http://" . "$serverip" . "/key.pub";
     $hostname = "BEAST"; # also set in ./<mac>.php (as well as domain) -> this value is probably just for completion and never really used
     $pass = "yftK48L59TcL6";
     # To generate crypt(3) hashes install "whois" and type mkpasswd
@@ -319,20 +320,7 @@ d-i finish-install/reboot_in_progress note
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
-d-i preseed/late_command string \
-## set ssh key from github
-in-target sh -c 'mkdir -p -m 700 /<?php echo "$username"; ?>/.ssh'; \
-#   -p creates parent directories as needed
-#   -m as chmod
-in-target sh -c 'wget --no-proxy -O /home/<?php echo "$username"; ?>/.ssh/authorized_keys <?php echo "$sshkeyurl"; ?>'; \
-in-target sh -c 'chmod 600 /home/<?php echo "$username"; ?>/.ssh/authorized_keys'; \
+# load ssh key; disable password auth via ssh ( -> remote auth only works via certificate but local auth via password still works)
+d-i preseed/late_command string mkdir -p /target/home/<?php echo "$username"; ?>/.ssh/; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"
 ## set grub to not load video drivers and use default (bios) ones
-#'\'' is for escaping ' in a '' embraced string
-in-target sh -c 'sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet nomodeset\"/'\'' /etc/default/grub'; \
-## disable password auth via ssh ( -> remote auth only works via certificate but local auth via password still works)
-in-target sh -c 'sed -i '\''s/^#PasswordAuthentication yes/PasswordAuthentication no/'\'' /etc/ssh/sshd_config'; \
-## download baremetal_debian_scripts
-#in-target sh -c 'git clone https://github.com/shuroc/baremetal_debian_scripts /home/shuroc/'; \
-#in-target sh -c 'chmod +x /home/shuroc/baremetal_debian_scripts/chmod\ +x.sh'; \
-## install docker (should occur later in IaC)
-#in-target sh -c '/home/shuroc/baremetal_debian_scripts/docker-install.sh';
+#sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet nomodeset\"/'\'' /etc/default/grub
