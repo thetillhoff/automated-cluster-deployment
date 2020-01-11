@@ -7,6 +7,7 @@ The key generation is optional at this point, as by default a public ssh key is 
 
 ## notes
 Most reoccuring tasks are specified in the ```Taskfile.yml```.
+If further information is neccessary, please look at ```./pxe/readme.md```.
 
 ## TODO
 - [ ] load generated public ssh key to new hosts, either additionally or as the new default

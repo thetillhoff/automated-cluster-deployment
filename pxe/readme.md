@@ -4,7 +4,7 @@ This container will run a pxe proxy server, which works along with another prima
 ## troubleshooting
 If you get the error "dnsmasq: failed to bind DHCP server socket: Address already in use" and if
   sudo netstat -tulpn | grep :53
-returns systemd-resolve and
+returns systemd-resolve or dnsmasq and
   sudo netstat -tulpn | grep :67 
 returns dnsmasq as occupying process, kill them via
   sudo kill <pid>
