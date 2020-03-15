@@ -31,7 +31,7 @@ d-i debian-installer/locale string en_US
 d-i keyboard-configuration/xkb-keymap select de
 
 
-## static network configuraiton
+## static network configuration
 
 # IPv4 example
 #d-i netcfg/get_ipaddress string 192.168.1.42
