@@ -20,12 +20,14 @@
     #ipxe> echo ${net0/mac:hexraw}
     #525400123456
 
-    # best source so far: https://gist.github.com/robinsmidsrod/2234639
+    # best source fot that so far: https://gist.github.com/robinsmidsrod/2234639
 
 
     ### variables
 
     $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
+    $preseedfilepath = 'mac/'.$mac.'_preseed.php'; # // the part before that is set with the line "set boot-url ..." below
+    $hostname = "BEAST";
 
 
     ### last seen file creation
@@ -59,6 +61,6 @@ kernel ${boot-url}netboot/debian-installer/amd64/linux initrd=initrd.gz
 initrd ${boot-url}netboot/debian-installer/amd64/initrd.gz
 #imgargs linux initrd=initrd.gz auto=true fb=false
 # hostname and domain are set before preseed file is loaded, so they have to be set before
-imgargs linux initrd=initrd.gz auto=true fb=false url=${boot-url}mac/<?php echo $mac; ?>_preseed.php hostname=BEAST domain=nodomain
+imgargs linux initrd=initrd.gz auto=true fb=false url=${boot-url}<?php echo $preseedfilepath; ?> hostname=<?php echo $hostname; ?> domain=nodomain
 boot || goto failed
 goto start
