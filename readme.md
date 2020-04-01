@@ -6,11 +6,5 @@ It can/will be decided later in the process whether the pxe-server and/or the an
 The key generation is optional at this point, as by default a public ssh key is loaded from a provided url.
 
 ## notes
-Most reoccuring tasks are specified in the ```Taskfile.yml```.
-If further information is neccessary, please look at ```./pxe/readme.md```.
-
-## TODO
-- [ ] load generated public ssh key to new hosts, either additionally or as the new default
-- [ ] setup ansible with new hosts
-- [ ] configure ansible for reload config at an specified interval (from a git repo)
-- [ ] configure ansible to store new hosts to a git repo
+Most reoccuring tasks are specified in the ```./Taskfile.yml```.
+If further information is needed, please look at ```./pxe/readme.md``` or ```./ansible/readme.md``` respectively.

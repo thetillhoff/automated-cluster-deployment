@@ -13,15 +13,13 @@ Restart them later (for internet access) via
   sudo service network-manager restart
 
 # notes
-## debian shutdown/reboot commands
-systemctl poweroff
-systemctl reboot
 ## nginx logs are in
 /var/log/nginx/error.log
 and
 /var/log/nginx/access.log
 
 ## change bios boot order in linux
+#(TODO: add this into a proper wrapper so it can be done automatically -> reinstall)
 ### to list the current settings
 bootmgr
 this may result in

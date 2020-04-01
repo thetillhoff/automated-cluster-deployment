@@ -8,49 +8,35 @@ tasks:
   init:
     cmds:
       - task: init:sshkeygen
-      - task: init:netboot
-      - task: init:pxeansible
+      - cd pxe; task init
+      - cd ansible; task init
 
-  # create ssh-key-pair named key and key.pub
-  init:sshkeygen:
+
+  # create ssh-key-pair if no public key exists
+  init:sshkey:
     cmds:
-      - cd ./pxe/containerdata; ssh-keygen -b 4096 -t rsa -f ./key -N "" <<< y
-      - cd ./pxe/containerdata; cp ./key.pub ./public/key.pub
+      - cd ./; ssh-keygen -b 4096 -t rsa -f ./key -N "" <<< y
+    status:
+      - test -f ./key.pub
   # load ssh-public-key from github
   #sshkeyload:
   #  cmds:
   #    - cd ./pxe/containerdata/public; wget https://github.com/tillhoff.keys -O key.pub
 
-  # get netinst-files for debian installation
-  init:netboot:
-    cmds:
-      - rm -dr ./pxe/containerdata/public/netboot
-      - mkdir ./pxe/containerdata/public/netboot
-      - cd ./pxe/containerdata/public/netboot; wget http://ftp.nl.debian.org/debian/dists/buster/main/installer-amd64/current/images/netboot/netboot.tar.gz -O ./debian-netboot.tar.gz
-      - cd ./pxe/containerdata/public/netboot; tar -xvzf ./debian-netboot.tar.gz
-      - cd ./pxe/containerdata/public/netboot; rm ./debian-netboot.tar.gz
 
-  # build of the 'pxe-server with ansible' docker-image
-  init:pxeansible:
+  # run the software
+  run:
     cmds:
-      - cd ./pxe; docker build . -t container_pxeansible
+      - cd pxe; task run
+      - cd ansible; task run
+
+
+
+
+
+
 
   # force rebuild of the 'pxe-server with ansible' docker-image
   force:rebuild:pxeansible:
     cmds:
       - cd ./pxe; docker build . -t container_pxeansible --no-cache
-
-  # run the software
-  run:
-    cmds:
-      - task: run:pxeansible
-
-  # run pxe-server with ansible docker image
-  run:pxeansible:
-    cmds:
-      - cd ./pxe; docker run --rm --cap-add=NET_ADMIN --net=host -it -v $PWD/containerdata:/container container_pxeansible
-
-  # run pxe-server with ansible in debug mode (attached & manual start of software)
-  debug:pxeansible:
-    cmds:
-      - cd ./pxe; docker run --rm --cap-add=NET_ADMIN --net=host -it -v $PWD/containerdata:/container container_pxeansible bash -c "/start.sh && service nginx start && service php7.0-fpm start; echo 'run dnsmasq --no-daemon --log-queries --log-facility=/container/dnsmasq.log'; bash"
