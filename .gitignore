@@ -1,4 +1,3 @@
-pxe/containerdata/web/boot.ipxe
-*.key
+pxe/containerdata/tftp/boot.ipxe
 pxe/containerdata/web/netboot/*
-#pxe/containerdata/web/mac/*.lasthandled
+*.key
