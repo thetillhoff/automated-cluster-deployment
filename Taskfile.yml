@@ -7,7 +7,7 @@ tasks:
   # create / load initial files/containers
   init:
     cmds:
-      - task: init:sshkeygen
+      - task: init:sshkey
       - cd pxe; task init
       - cd ansible; task init
 
