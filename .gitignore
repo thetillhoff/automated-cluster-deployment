@@ -1,3 +1,4 @@
 pxe/containerdata/web/boot.ipxe
 *.key
 pxe/containerdata/web/netboot/*
+#pxe/containerdata/web/mac/*.lasthandled
