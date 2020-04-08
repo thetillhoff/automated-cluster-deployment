@@ -42,4 +42,4 @@ RUN chmod o+w /etc/ansible/hosts
 
 
 ### startup command
-CMD /start.sh && service nginx start && service php7.0-fpm start
+CMD service nginx start && service php7.0-fpm start && bash
