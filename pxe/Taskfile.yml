@@ -15,6 +15,12 @@ tasks:
     cmds:
       - docker build . -t containered_pxe
 
+  # force the rebuild of the 'containered_pxe' docker-image
+  rebuild:
+    cmds:
+      - docker build . -t container_pxeansible --no-cache
+
+
   # run the 'containered_pxe' docker-image in detached mode
   run:
     cmds:

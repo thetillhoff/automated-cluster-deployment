@@ -9,7 +9,6 @@ tasks:
     cmds:
       - task: init:sshkey
       - cd pxe; task init
-      #- cd ansible; task init
 
 
   # create ssh-key-pair if no public key exists
@@ -28,15 +27,3 @@ tasks:
   run:
     cmds:
       - cd pxe; task run
-      #- cd ansible; task run
-
-
-
-
-
-
-
-  # force rebuild of the 'pxe-server with ansible' docker-image
-  #force:rebuild:pxeansible:
-  #  cmds:
-  #    - cd ./pxe; docker build . -t container_pxeansible --no-cache
