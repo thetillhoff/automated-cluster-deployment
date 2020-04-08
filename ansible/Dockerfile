@@ -33,8 +33,8 @@ EXPOSE 80/tcp
 
 
 ### run custom configuration
-RUN chmod o+w /etc/ansible/hosts
+#RUN chmod o+w /etc/ansible/hosts
 
 
 ### startup command
-CMD service nginx start && service php7.0-fpm start && bash
+CMD chmod o+w /etc/ansible/hosts && service nginx start && service php7.0-fpm start && bash
