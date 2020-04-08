@@ -18,7 +18,7 @@ tasks:
   # run the 'containered_pxe' docker-image
   run:
     cmds:
-      - docker run --rm --cap-add=NET_ADMIN --net=host -it -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe
+      - docker run --rm --cap-add=NET_ADMIN --net=host -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe
 
   # run the 'containered_pxe' docker-image in debug mode
   run:debug:
