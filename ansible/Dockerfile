@@ -32,11 +32,6 @@ RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/site
 EXPOSE 80/tcp
 
 
-### add custom files
-COPY ./start.sh /start.sh
-RUN chmod +x /start.sh
-
-
 ### run custom configuration
 RUN chmod o+w /etc/ansible/hosts
 
