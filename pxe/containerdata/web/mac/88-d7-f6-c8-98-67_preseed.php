@@ -322,6 +322,6 @@ d-i finish-install/reboot_in_progress note
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 # load ssh key; disable password auth via ssh ( -> remote auth only works via certificate but local auth via password still works)
-d-i preseed/late_command string mkdir -p /target/home/<?php echo "$username"; ?>/.ssh/; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; curl "<?php echo $serverip; ?>/ansible_hosts_add.php";
+d-i preseed/late_command string mkdir -p /target/home/<?php echo "$username"; ?>/.ssh/; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; curl "<?php echo $serverip; ?>:8888/ansible_hosts_add.php";
 ## set grub to not load video drivers and use default (bios) ones
 #sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet nomodeset\"/'\'' /etc/default/grub
