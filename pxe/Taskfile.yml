@@ -15,10 +15,10 @@ tasks:
     cmds:
       - docker build . -t containered_pxe
 
-  # run the 'containered_pxe' docker-image
+  # run the 'containered_pxe' docker-image in detached mode
   run:
     cmds:
-      - docker run --rm --cap-add=NET_ADMIN --net=host -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe
+      - docker run --rm -d --cap-add=NET_ADMIN --net=host -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe
 
   # run the 'containered_pxe' docker-image in debug mode
   run:debug:
