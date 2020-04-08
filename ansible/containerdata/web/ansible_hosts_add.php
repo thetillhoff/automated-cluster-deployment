@@ -20,7 +20,7 @@
         $beginning = array_splice($lines,0,sizeof($lines)-$index_header); # detach everything from [nogroup] upwards (including [nogroup])
 
         $index_empty = array_search("",$lines); # search for first empty line after [nogroup]
-        $second_beginning = array_splice($lines,0,sizeof($lines)-$index_empty-1); # detach everything from first empty line upwards (excluding empty line)
+        $second_beginning = array_splice($lines,0,(sizeof($lines)-$index_empty)-1); # detach everything from first empty line upwards (excluding empty line)
         $beginning = array_merge($beginning, $second_beginning); # merging everything before newlines into beginning
 
         $newlines = array_merge($beginning, array($clientip)); # appending the new line to beginning and put result in newlines
