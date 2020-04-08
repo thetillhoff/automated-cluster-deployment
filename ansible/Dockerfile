@@ -26,7 +26,7 @@ apt-get update && \
 apt-get install -y ansible
 
 ## add nginx config file
-COPY ./nginx_config_site /etc/nginx/sites-available/site
+COPY ./nginx_site_config /etc/nginx/sites-available/site
 ## enable nginx site and remove default site
 RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/site /etc/nginx/sites-enabled/
 EXPOSE 80/tcp
