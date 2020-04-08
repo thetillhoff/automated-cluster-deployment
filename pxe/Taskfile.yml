@@ -34,8 +34,8 @@ tasks:
   # get netinst-files for debian installation
   init:netboot:
     cmds:
-      - rm -dr ./containerdata/web/netboot
-      - mkdir ./containerdata/web/netboot
+      - rm -dr ./containerdata/web/netboot/*
+      - mkdir -p ./containerdata/web/netboot
       - cd ./containerdata/web/netboot; wget http://ftp.nl.debian.org/debian/dists/buster/main/installer-amd64/current/images/netboot/netboot.tar.gz -O ./debian-netboot.tar.gz
       - cd ./containerdata/web/netboot; tar -xvzf ./debian-netboot.tar.gz
       - cd ./containerdata/web/netboot; rm ./debian-netboot.tar.gz
