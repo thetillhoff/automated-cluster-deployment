@@ -34,9 +34,9 @@ tasks:
   # get netinst-files for debian installation
   init:netboot:
     cmds:
-      - cmd: rm -dr ./containerdata/web/netboot/*
-        ignore_error: true
       - mkdir -p ./containerdata/web/netboot
       - cd ./containerdata/web/netboot; wget http://ftp.nl.debian.org/debian/dists/buster/main/installer-amd64/current/images/netboot/netboot.tar.gz -O ./debian-netboot.tar.gz
       - cd ./containerdata/web/netboot; tar -xvzf ./debian-netboot.tar.gz
       - cd ./containerdata/web/netboot; rm ./debian-netboot.tar.gz
+    status:
+      - test -f ./containerdata/web/netboot/pxelinux.0
