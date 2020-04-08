@@ -37,6 +37,6 @@ tasks:
 
 
   # force rebuild of the 'pxe-server with ansible' docker-image
-  force:rebuild:pxeansible:
-    cmds:
-      - cd ./pxe; docker build . -t container_pxeansible --no-cache
+  #force:rebuild:pxeansible:
+  #  cmds:
+  #    - cd ./pxe; docker build . -t container_pxeansible --no-cache
