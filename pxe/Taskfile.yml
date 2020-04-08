@@ -18,12 +18,12 @@ tasks:
   # run the 'containered_pxe' docker-image in detached mode
   run:
     cmds:
-      - docker run --rm -d --cap-add=NET_ADMIN --net=host -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe
+      - docker run --cap-add=NET_ADMIN --net=host -d --rm -v $PWD/../ansible_hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe
 
   # run the 'containered_pxe' docker-image in debug mode
   run:debug:
     cmds:
-      - docker run --rm --cap-add=NET_ADMIN --net=host -it -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe bash -c "/start.sh && service nginx start && service php7.0-fpm start; echo 'run dnsmasq --no-daemon --log-queries --log-facility=/container/dnsmasq.log'; bash"
+      - docker run --cap-add=NET_ADMIN --net=host -it --rm -v $PWD/../ansible_hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe bash -c "/start.sh && service nginx start && service php7.0-fpm start; echo 'run dnsmasq --no-daemon --log-queries --log-facility=/container/dnsmasq.log'; bash"
 
   # stop all 'containered_pxe' docker-containers
   stop:
@@ -31,7 +31,7 @@ tasks:
       - docker stop containered_pxe
       - docker rm containered_pxe
 
-  # get netinst-files for debian installation
+  # get netinst-files for debian installation (only if not already there)
   init:netboot:
     cmds:
       - mkdir -p ./containerdata/web/netboot

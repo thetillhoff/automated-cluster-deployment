@@ -1,7 +1,7 @@
 #!ipxe
 
 #hostname: BEAST
-# The only variable thing in here is the actual filename and the hostname comment on line 3 - everything else is generic.
+# The only variable thing in here is the actual filename and the hostname comment on line 3 and line 30 - everything else is generic.
 
 <?php
     header("Content-type: text/plain");
@@ -32,7 +32,7 @@
 
     ### last seen file creation
     
-    $mac_file = '/container/web/mac/'.$mac.'_lasthandled';
+    $mac_file = '/container/web/mac/'.$mac.'.lasthandled';
     $handle = fopen($mac_file, 'w') or die('Cannot open file:  '.$mac_file);
     date_default_timezone_set('Europe/Berlin');
     $data = date('Y-m-d H:i:s', time());
@@ -41,7 +41,7 @@
 
 ### tell the user about the new mac address and sleep for X seconds
 echo Existing MAC detected. File used from ./mac/<?php echo $mac; ?>.php
-sleep 5
+sleep 1
 
 ### ipxe variables
 
@@ -57,6 +57,7 @@ cpuid --ext 29 && set archl amd64 || set archl i386
 
 :debian-netinst
 echo Booting Debian 10.0.0 netinstaller
+sleep 1
 kernel ${boot-url}netboot/debian-installer/amd64/linux initrd=initrd.gz
 initrd ${boot-url}netboot/debian-installer/amd64/initrd.gz
 #imgargs linux initrd=initrd.gz auto=true fb=false

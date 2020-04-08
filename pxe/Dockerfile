@@ -39,7 +39,7 @@ EXPOSE 69/tcp
 ### add custom files
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
-RUN mkdir /key
+RUN mkdir /key /etc/ansible
 
 
 ### startup command
