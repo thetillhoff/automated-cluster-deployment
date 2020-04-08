@@ -9,7 +9,7 @@ tasks:
     cmds:
       - task: init:sshkey
       - cd pxe; task init
-      - cd ansible; task init
+      #- cd ansible; task init
 
 
   # create ssh-key-pair if no public key exists
@@ -28,7 +28,7 @@ tasks:
   run:
     cmds:
       - cd pxe; task run
-      - cd ansible; task run
+      #- cd ansible; task run
 
 
 
