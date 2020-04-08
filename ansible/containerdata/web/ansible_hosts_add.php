@@ -5,7 +5,7 @@
     ### php variables
 
     $clientip = $_SERVER['REMOTE_ADDR'];
-    echo $clientip;
+    echo $clientip."\r\n";
 
     
     ### variables and initial file creation
