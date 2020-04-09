@@ -14,6 +14,7 @@ tasks:
   # create ssh-key-pair if no public key exists
   init:sshkey:
     cmds:
+      - chmod +x ./ssh-keygen.sh
       - ./ssh-keygen.sh
     status:
       - test -f ./key.pub
