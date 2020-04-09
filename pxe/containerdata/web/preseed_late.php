@@ -4,6 +4,7 @@
     ### php variables
     $serverip = $_SERVER['SERVER_ADDR'];
     $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
+    $username = $_GET["username"];
 
 ?>#!/bin/sh
 
@@ -25,12 +26,12 @@ echo '#!/bin/bash
 
 touch /home/enforge/test
 chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh
-sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 curl http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>
+touch /home/enforge/test2
 
 systemctl disable firstboot
 rm /etc/systemd/system/firstboot.service
-rm /firstboot.sh
+#rm /firstboot.sh
 ' > /firstboot.sh
 chmod +x /firstboot.sh
 systemctl enable firstboot
