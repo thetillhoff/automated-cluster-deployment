@@ -17,11 +17,12 @@
     $username = "enforge";
     #$sshkey = str_replace(' ','\ ',file_get_contents("/container/web/key.pub")); # unused
     $sshurl = "http://" . "$serverip" . "/key/key.pub";
-    $hostname = "BEAST"; # also set in ./<mac>.php (as well as domain) -> this value is probably just for completion and never really used
+    $hostname = "BEAST"; # also set in ./<mac>.php (as well as domain) -> this value is probably just for completeness and never really used
     $pass = "yftK48L59TcL6";
     # To generate crypt(3) hashes install "whois" and type mkpasswd
     # somepass: yftK48L59TcL6
-    $mirror = "http.us.debian.org";
+    #$mirror = "http.us.debian.org";
+    $mirror = "deb.debian.org";
     $packages ="openssh-server wget curl git net-tools nano";
 ?>
 
@@ -30,7 +31,10 @@ d-i debian-installer/locale string en_US
 
 
 ## set keyboard
-d-i keyboard-configuration/xkb-keymap select de
+# disable automatic keyboard detection
+d-i console-setup/ask_detect boolean false
+#old: d-i keyboard-configuration/xkb-keymap select de
+d-i keyboard-configuration/layoutcode string de
 
 
 ## static network configuration
