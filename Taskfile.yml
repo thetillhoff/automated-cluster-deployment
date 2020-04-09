@@ -14,7 +14,7 @@ tasks:
   # create ssh-key-pair if no public key exists
   init:sshkey:
     cmds:
-      - read -s "Please enter your email for the ssh-key:" email
+      - read -p "Please enter your email for the ssh-key:" email
       - ssh-keygen -b 4096 -t rsa -f ./key -C "$email" -N "" <<< y
     status:
       - test -f ./key.pub
