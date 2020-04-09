@@ -9,17 +9,17 @@
 ?>#!/bin/bash
 
 echo '[Unit]
-Description=Run script at first startup after all services are loaded
-After=default.target
+Description =   Run script at first startup after all services are loaded
+After =         network.target network-online.target
+#                ^->former for compatibility, later actual target
+Wants =         network-online.target
 
 [Service]
-Type=simple
-#RemainAfterExit=no means there is no need to stop it at a later point
-RemainAfterExit=no
-ExecStart=/firstboot.sh
+Type =          simple
+ExecStart =     /firstboot.sh
 
 [Install]
-WantedBy=default.target
+WantedBy =      default.target
 ' > /etc/systemd/system/firstboot.service
 
 echo '#!/bin/bash
