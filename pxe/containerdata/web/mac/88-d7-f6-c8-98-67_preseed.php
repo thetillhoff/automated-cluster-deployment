@@ -15,8 +15,8 @@
     # best source so far: https://gist.github.com/robinsmidsrod/2234639
 
     $username = "enforge";
-    $sshkey = str_replace(' ','\ ',file_get_contents("/container/web/key.pub")); # unused
-    $sshurl = "http://" . "$serverip" . "/key.pub";
+    #$sshkey = str_replace(' ','\ ',file_get_contents("/container/web/key.pub")); # unused
+    $sshurl = "http://" . "$serverip" . "/key/key.pub";
     $hostname = "BEAST"; # also set in ./<mac>.php (as well as domain) -> this value is probably just for completion and never really used
     $pass = "yftK48L59TcL6";
     # To generate crypt(3) hashes install "whois" and type mkpasswd
@@ -324,6 +324,11 @@ d-i finish-install/reboot_in_progress note
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 # load ssh key; disable password auth via ssh ( -> remote auth only works via certificate but local auth via password still works)
 #d-i preseed/late_command string mkdir -p /target/home/<?php echo "$username"; ?>/.ssh/; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>:8888/ansible_hosts_add.php";
-d-i preseed/late_command string in-target /bin/sh -c "mkdir -p /home/<?php echo "$username"; ?>/.ssh/"; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; in-target /bin/sh -c "chown -R <?php echo "$username".":"."$username"; ?>"; in-target /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config"; in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>";
+d-i preseed/late_command string \
+  in-target /bin/sh -c "mkdir -p /home/<?php echo "$username"; ?>/.ssh/"; \
+  wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; \
+  in-target /bin/sh -c "chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh"; \
+  in-target /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config"; \
+  in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>";
 ## set grub to not load video drivers and use default (bios) ones
 #sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet nomodeset\"/'\'' /etc/default/grub
