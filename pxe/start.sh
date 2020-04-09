@@ -7,7 +7,7 @@ echo -e "#!ipxe\n" > /container/tftp/boot.ipxe
 echo -e "set boot-url http://$(cut -d' ' -f1 <<<$(hostname -I))/\n" >> /container/tftp/boot.ipxe
 echo -e "initrd \${boot-url}mac/\${mac:hexhyp}.lastinstalled && chain \${boot-url}boot_harddrive.php?mac=\${mac:hexhyp} ||" >> /container/tftp/boot.ipxe # if already installed, boot from harddrive
 echo -e "chain \${boot-url}mac/\${mac:hexhyp}.php?mac=\${mac:hexhyp} ||" >> /container/tftp/boot.ipxe # if mac is known and config file exists, load it
-echo -e "chain \${boot-url}default.php?mac=\${mac:hexhyp} ||" >> /container/tftp/boot.ipxe # else load menu
+echo -e "chain \${boot-url}default.php?mac=\${mac:hexhyp} ||" >> /container/tftp/boot.ipxe # else load default menu
 echo -e "shell" # else drop to shell
 
 ## set ip in dnsmasq.conf

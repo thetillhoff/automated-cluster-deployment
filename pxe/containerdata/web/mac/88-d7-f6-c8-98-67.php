@@ -26,7 +26,7 @@
     ### variables
 
     $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
-    $preseedfilepath = 'mac/'.$mac.'_preseed.php'; # // the part before that is set with the line "set boot-url ..." below
+    $preseedfilepath = 'mac/'.$mac.'_preseed.php?mac='.$mac; # // the part before that is set with the line "set boot-url ..." below
     $hostname = "BEAST";
 ?>
 
