@@ -27,6 +27,7 @@ echo '#!/bin/bash
 touch /home/enforge/test
 chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh
 curl http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>
+
 touch /home/enforge/test2
 
 systemctl disable firstboot
