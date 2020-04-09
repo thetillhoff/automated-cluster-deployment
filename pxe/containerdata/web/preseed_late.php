@@ -6,7 +6,7 @@
     $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
     $username = $_GET["username"];
 
-?>#!/bin/sh
+?>#!/bin/bash
 
 echo '[Unit]
 Description=Run script at first startup after all services are loaded
@@ -26,7 +26,7 @@ echo '#!/bin/bash
 
 touch /home/enforge/test
 chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh
-curl http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>
+curl "http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>"
 
 touch /home/enforge/test2
 
