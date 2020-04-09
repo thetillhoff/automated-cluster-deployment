@@ -5,8 +5,8 @@
     ### php variables
 
     $clientip = $_SERVER['REMOTE_ADDR'];
-    echo $clientip;
     $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
+    echo $mac.": ".$clientip;
 
     
     ### variables and initial file creation
@@ -36,7 +36,7 @@
 
         echo " added.\n";
     } else {
-        echo " is already listed.\n";
+        echo " already listed.\n";
     }
 
 
