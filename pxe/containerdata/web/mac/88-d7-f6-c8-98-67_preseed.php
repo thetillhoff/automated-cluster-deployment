@@ -327,8 +327,6 @@ d-i finish-install/reboot_in_progress note
 d-i preseed/late_command string \
   in-target /bin/sh -c "mkdir -p /home/<?php echo "$username"; ?>/.ssh/"; \
   wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; \
-  in-target /bin/sh -c "chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh"; \
-  in-target /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config"; \
-  in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>";
+  in-target /bin/sh -c "wget -O - http://<?php echo "$serverip"; ?>/preseed_late.php?mac=<?php echo $mac; ?> | bash";
 ## set grub to not load video drivers and use default (bios) ones
 #sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet nomodeset\"/'\'' /etc/default/grub
