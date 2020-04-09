@@ -10,12 +10,13 @@
 
 echo '[Unit]
 Description =   Run script at first startup after all services are loaded
+Wants =         network-online.target
 After =         network.target network-online.target
 #                ^->former for compatibility, later actual target
-Wants =         network-online.target
 
 [Service]
 Type =          simple
+ExecStartPre =  /bin/sleep 10
 ExecStart =     /firstboot.sh
 
 [Install]
