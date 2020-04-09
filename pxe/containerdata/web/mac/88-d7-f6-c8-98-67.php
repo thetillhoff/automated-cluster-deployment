@@ -28,15 +28,6 @@
     $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
     $preseedfilepath = 'mac/'.$mac.'_preseed.php'; # // the part before that is set with the line "set boot-url ..." below
     $hostname = "BEAST";
-
-
-    ### last seen file creation
-    
-    $mac_file = '/container/web/mac/'.$mac.'.lasthandled';
-    $handle = fopen($mac_file, 'w') or die('Cannot open file:  '.$mac_file);
-    date_default_timezone_set('Europe/Berlin');
-    $data = date('Y-m-d H:i:s', time());
-    fwrite($handle, $data);
 ?>
 
 ### tell the user about the new mac address and sleep for X seconds

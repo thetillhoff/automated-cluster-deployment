@@ -6,6 +6,7 @@
 
     $clientip = $_SERVER['REMOTE_ADDR'];
     echo $clientip;
+    $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
 
     
     ### variables and initial file creation
@@ -37,4 +38,13 @@
     } else {
         echo " is already listed.\n";
     }
+
+
+    ### last seen file creation
+    
+    $mac_file = '/container/web/mac/'.$mac.'.lasthandled';
+    $handle = fopen($mac_file, 'w') or die('Cannot open file:  '.$mac_file);
+    date_default_timezone_set('Europe/Berlin');
+    $data = date('Y-m-d H:i:s', time());
+    fwrite($handle, $data);
 ?>
