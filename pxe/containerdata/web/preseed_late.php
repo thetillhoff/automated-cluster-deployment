@@ -35,6 +35,9 @@ chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"
 #   - a reboot fixes this, but how to reboot if you don't have access to it?
 # -> correction:
 for netint in /sys/class/net/!(lo); do ip link set $(basename $netint) up; done
+dhclient -r
+dhclient
+sleep 1
 
 # add self to ansible hosts list of pxe server and leave debug message on success and error
 curl -s "http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>" > /home/<?php echo "$username"; ?>/ansible_ready 2> /home/<?php echo "$username"; ?>/error
