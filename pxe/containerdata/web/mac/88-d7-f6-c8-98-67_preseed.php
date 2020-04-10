@@ -33,8 +33,9 @@ d-i debian-installer/locale string en_US
 ## set keyboard
 # disable automatic keyboard detection
 d-i console-setup/ask_detect boolean false
-#old: d-i keyboard-configuration/xkb-keymap select de
+d-i keyboard-configuration/xkb-keymap select de
 d-i keyboard-configuration/layoutcode string de
+d-i keyboard-configuration/variantcode string
 
 
 ## static network configuration
