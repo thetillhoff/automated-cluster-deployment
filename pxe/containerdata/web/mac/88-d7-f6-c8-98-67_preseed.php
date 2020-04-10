@@ -97,6 +97,7 @@ d-i passwd/username string <?php echo "$username\n"; ?>
 #d-i passwd/user-password-crypted password [crypt(3) hash]
 d-i passwd/user-password-crypted password <?php echo "$pass\n"; ?>
 
+
 ## Clock and time zone setup
 
 # Controls whether or not the hardware clock is set to UTC.
