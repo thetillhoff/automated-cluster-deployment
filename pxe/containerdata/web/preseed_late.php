@@ -10,7 +10,7 @@
 ?>#!/bin/bash
 
 # enforce proper keyboard layout
-echo \'# KEYBOARD CONFIGURATION files
+echo '# KEYBOARD CONFIGURATION files
 
 # Consult the keyboard(5) manual page.
 
@@ -20,7 +20,7 @@ XKBVARIANT=""
 XKBOPTIONS=""
 
 BACKSPACE="guess"
-\' > /etc/default/keyboard
+' > /etc/default/keyboard
 
 
 # create firstboot.service file
