@@ -31,8 +31,8 @@ echo '#!/bin/bash
 # make sure permissions are correct on ~/.ssh folder
 chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh
 
-# add self to ansible hosts list of pxe server
-curl "http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>" > /home/<?php echo "$username"; ?>/ansible_ready 2> /home/<?php echo "$username"; ?>/error
+# add self to ansible hosts list of pxe server and leave debug message on success and error
+curl -s "http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>" > /home/<?php echo "$username"; ?>/ansible_ready 2> /home/<?php echo "$username"; ?>/error
 
 # remove firstboot files
 systemctl disable firstboot
