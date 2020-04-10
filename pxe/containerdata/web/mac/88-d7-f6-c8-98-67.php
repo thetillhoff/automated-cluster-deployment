@@ -53,6 +53,7 @@ kernel ${boot-url}netboot/debian-installer/amd64/linux initrd=initrd.gz
 initrd ${boot-url}netboot/debian-installer/amd64/initrd.gz
 #imgargs linux initrd=initrd.gz auto=true fb=false
 # hostname and domain are set before preseed file is loaded, so they have to be set before
+# auto=true is required to preseed locales like keyboard-layout etc.
 imgargs linux initrd=initrd.gz auto=true fb=false url=${boot-url}<?php echo $preseedfilepath; ?> hostname=<?php echo $hostname; ?> domain=nodomain
 boot || goto failed
 goto start
