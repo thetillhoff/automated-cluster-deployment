@@ -27,3 +27,6 @@ tasks:
   run:
     cmds:
       - cd pxe; task run
+    preconditions:
+      - test -f ./key.pub
+      - test -f ./pxe/containerdata/web/netboot/pxelinux.0
