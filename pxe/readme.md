@@ -13,20 +13,3 @@ returns dnsmasq as occupying process, kill them via
 where <pid> is the number before the program name from the netstat command.
 Restart them later (for internet access) via
   sudo service network-manager restart
-
-# notes
-## nginx logs are in
-/var/log/nginx/error.log
-and
-/var/log/nginx/access.log
-
-## change bios boot order in linux
-#(TODO: add this into a proper wrapper so it can be done automatically -> reinstall)
-### to list the current settings
-bootmgr
-this may result in
-BootOrder: 0003,0001,0002
-### to change settings (persistent)
-bootmgr -o 0002,0001,0003
-### to change settings (single reboot)
-bootmgr --bootnext 0002
