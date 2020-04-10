@@ -9,20 +9,6 @@
 
 ?>#!/bin/bash
 
-# enforce proper keyboard layout
-echo '# KEYBOARD CONFIGURATION files
-
-# Consult the keyboard(5) manual page.
-
-XKBMODEL="pc105"
-XKBLAYOUT="<?php echo "$keyboardlayout"; ?>"
-XKBVARIANT=""
-XKBOPTIONS=""
-
-BACKSPACE="guess"
-' > /etc/default/keyboard
-
-
 # create firstboot.service file
 echo '[Unit]
 Description =   Run script at first startup after all services are loaded
