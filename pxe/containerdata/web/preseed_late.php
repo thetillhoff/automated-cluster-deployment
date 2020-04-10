@@ -31,6 +31,11 @@ echo '#!/bin/bash
 # make sure permissions are correct on ~/.ssh folder
 chown -R <?php echo "$username".":"."$username"; ?> /home/<?php echo "$username"; ?>/.ssh
 
+# out of unknown reasons, sometimes the network interface is 'down' after installation
+#   - a reboot fixes this, but how to reboot if you don't have access to it?
+# -> correction:
+for netint in /sys/class/net/!(lo); do ip link set $(basename $netint) up; done
+
 # add self to ansible hosts list of pxe server and leave debug message on success and error
 curl -s "http://<?php echo "$serverip"; ?>/ansible_hosts_add.php?mac=<?php echo "$mac"; ?>" > /home/<?php echo "$username"; ?>/ansible_ready 2> /home/<?php echo "$username"; ?>/error
 # delete empty files afterwards
