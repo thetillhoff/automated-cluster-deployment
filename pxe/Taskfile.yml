@@ -37,7 +37,6 @@ tasks:
   stop:
     cmds:
       - docker stop pxe
-      - docker rm pxe
 
   # get netinst-files for debian installation (only if not already there)
   init:netboot:
