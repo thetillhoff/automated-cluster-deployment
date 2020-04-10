@@ -332,9 +332,10 @@ d-i finish-install/reboot_in_progress note
 #d-i preseed/late_command string mkdir -p /target/home/<?php echo "$username"; ?>/.ssh/; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>:8888/ansible_hosts_add.php";
 d-i preseed/late_command string \
   in-target /bin/sh -c "mkdir -p /home/<?php echo "$username"; ?>/.ssh/"; \
-  wget "<?php echo "$sshurl"; ?>" -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; \
+  wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; \
   in-target /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config"; \
-  wget "http://<?php echo "$serverip"; ?>/preseed_late.php?mac=<?php echo $mac; ?>&username=<?php echo $username; ?>" -O /target/install.sh; \
+  wget http://<?php echo "$serverip"; ?>/preseed_late.php?mac=<?php echo $mac; ?>&username=<?php echo $username; ?> -O /target/install.sh; \
+  in-target /bin/sh -c "chmod +x /install.sh"; \
   in-target /bin/sh /install.sh; \
   rm /target/install.sh;
 ## set grub to not load video drivers and use default (bios) ones
