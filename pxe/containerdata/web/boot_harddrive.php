@@ -5,8 +5,8 @@
 ?>
 
 ### tell user that boot via harddrive is done
-echo Booting from local harddrive in 5 seconds.
-sleep 5000
+echo Booting from local harddrive in 1 seconds.
+sleep 1
 
 
 ### reboot from local harddrive
