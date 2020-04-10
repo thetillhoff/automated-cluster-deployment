@@ -1,3 +1,4 @@
 pxe/containerdata/tftp/boot.ipxe
 pxe/containerdata/web/netboot/*
-key key.pub
+/key
+/key.pub
