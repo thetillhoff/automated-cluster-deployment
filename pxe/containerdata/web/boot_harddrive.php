@@ -10,6 +10,6 @@ sleep 1
 
 
 ### reboot from local harddrive
-exit
+#exit
 # alternatively use
-# sanboot --no-describe --drive 0x80
+sanboot --no-describe --drive 0x80
