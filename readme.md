@@ -11,6 +11,8 @@ If further information is needed, please look at ```./pxe/readme.md``` or ```./a
 
 ### timings
 To get a feeling for when a problem occured, here are some measured times for a bare-metal-deployment of a single machine:
-- From pressing the boot button until accessible: ~ 7-15min
-- Poweroff: ~5s
-- Boot: ~ 40s
+- from pressing the boot button until accessible: ~ 7-15min
+- poweroff: ~ 5s
+- (normal) boot: ~ 40s
+- network, then normal boot (pxe online): ~ 1:15
+- network, then normal boot (pxe offline): ~ 1:40 (pxe timeout is a very long time... probably a minute)

@@ -4,6 +4,14 @@
   - make sure boot order has network before debian/disk, but have both enabled, so if network exits, the boot from disk runs
   - consolidate variables for whole project
   - consolidate variables/files for each machine
+- update scripts
+  - https://askubuntu.com/questions/1705/how-can-i-create-a-select-menu-in-a-shell-script
+    - read ips from ansible_hosts file, create menu out of it
+    - read username from consolidated variables
+- check into pci error on boot
+  - https://itsfoss.com/pcie-bus-error-severity-corrected/
+  - https://askubuntu.com/questions/772182/pci-bus-error-on-startup-while-booting-into-login-screen-kubuntu-16-04
+  - https://askubuntu.com/questions/19486/how-do-i-add-a-kernel-boot-parameter
 - edit efibootmgr settings automatically to reboot via network
   - only for next boot:
     efibootmgr --bootnext 00XX
