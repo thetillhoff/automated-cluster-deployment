@@ -1,6 +1,6 @@
 # open todos for this project
 
-- update readme with proper troubleshooting chapter
+- update readme with proper howto/troubleshooting chapters
   - make sure boot order has network before debian/disk, but have both enabled, so if network exits, the boot from disk runs
   - consolidate variables for whole project
   - consolidate variables/files for each machine
@@ -29,6 +29,7 @@
     bootmgr -o 0002,0001,0003
   - to change settings (single reboot)
     efibootmgr --bootnext 0002
+- does it work with other machines too? add example to howto section
 - add other OS capabilites, like plain ubuntu and windows (10 & Server2019) (best would be iso-support)
 - add mgmt GUI (e.g. via browser)
   - add reboot capabilities to that GUI
