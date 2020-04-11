@@ -1,6 +1,9 @@
 # open todos for this project
 
 - update readme with proper troubleshooting chapter
+  - make sure boot order has network before debian/disk, but have both enabled, so if network exits, the boot from disk runs
+  - consolidate variables for whole project
+  - consolidate variables/files for each machine
 - edit efibootmgr settings automatically to reboot via network
   - only for next boot:
     efibootmgr --bootnext 00XX

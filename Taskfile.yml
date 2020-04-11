@@ -30,3 +30,15 @@ tasks:
     preconditions:
       - test -f ./key.pub
       - test -f ./pxe/containerdata/web/netboot/pxelinux.0
+
+  
+  # reboot a host
+  reboot:
+    cmds:
+      - ./scripts/reboot.sh
+
+  
+  # ssh into a host
+  ssh:
+    cmds:
+      - ./scripts/ssh.sh
