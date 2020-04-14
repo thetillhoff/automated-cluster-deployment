@@ -31,7 +31,7 @@ tasks:
   # run the 'containered_pxe' docker-image in debug mode
   run:debug:
     cmds:
-      - docker run --name pxe --cap-add=NET_ADMIN --net=host -it --rm -v $PWD/../ansible_hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe bash -c "/start.sh && service nginx start && service php7.0-fpm start; echo 'run dnsmasq --no-daemon --log-queries --log-facility=/container/dnsmasq.log'; bash"
+      - docker run --name pxe --cap-add=NET_ADMIN --net=host -it -v $PWD/../ansible_hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe bash -c "/start.sh && service nginx start && service php7.0-fpm start; echo 'run dnsmasq --no-daemon --log-queries --log-facility=/container/dnsmasq.log'; bash"
 
   # stop all 'containered_pxe' docker-containers
   stop:
