@@ -11,6 +11,7 @@ tasks:
       - cd golang; task build
       - cd golang; task run
       - cp golang/main pxe/containerdata/go/main
+      - cp golang/*.tmpl pxe/containerdata/go/
       - cd pxe; task init
 
 
