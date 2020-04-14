@@ -13,19 +13,21 @@ rm -rf /tmp/* /var/tmp/* /var/cache/apt/* /var/cache/distfiles/*
 
 ### install required software
 ## install system basics
-RUN apt-get install -y net-tools
+RUN apt-get install -y net-tools wget
+## install dnsmasq
 RUN apt-get install -y dnsmasq
-## install nginx with php
+## install nginx
 RUN apt-get install -y nginx
-RUN apt-get install -y php7.0-fpm
-
+## install golang (only binary itself)
+RUN wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O ./go.tar.gz && \
+  tar xzf ./go.tar.gz && cp ./go/bin/go /usr/local/bin/ && rm -dr ./go && \
+  rm ./go.tar.gz
 
 ## add nginx config file
 COPY ./nginx_site_config /etc/nginx/sites-available/site
 ## enable nginx site and remove default site
 RUN rm /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/site /etc/nginx/sites-enabled/
 EXPOSE 80/tcp
-
 
 ## add dnsmasq config file
 COPY ./dnsmasq.conf /etc/dnsmasq.conf
@@ -35,6 +37,9 @@ EXPOSE 53/udp
 EXPOSE 69/udp
 EXPOSE 69/tcp
 
+## add go files
+COPY golang /go
+
 
 ### add custom files
 COPY ./start.sh /start.sh
@@ -43,4 +48,4 @@ RUN mkdir /key /etc/ansible
 
 
 ### startup command
-CMD /start.sh && service nginx start && service php7.0-fpm start && dnsmasq --no-daemon
+CMD /start.sh && service nginx start && dnsmasq && go build /go/ -o /go/http && /go/http

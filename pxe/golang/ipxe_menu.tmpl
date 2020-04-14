@@ -1,0 +1,8 @@
+#!ipxe
+
+echo {{ index .Values "message" }}
+
+echo Shutting down in 5 seconds...
+sleep 5
+
+poweroff

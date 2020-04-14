@@ -1,0 +1,8 @@
+#!ipxe
+
+echo {{ index .Values "message" }}
+
+echo Booting from next boot device in 3 seconds...
+sleep 3
+
+exit

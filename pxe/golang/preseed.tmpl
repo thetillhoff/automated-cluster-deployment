@@ -1,30 +1,4 @@
-<?php
-    header("Content-type: text/plain");
-
-    ### php variables
-    $serverip = $_SERVER['SERVER_ADDR'];
-    $mac = str_replace(":", "-", htmlspecialchars($_GET["mac"]));
-
-    ### comments
-    # mac:hexhyp results f.e. in 52-54-00-12-34-56
-    #ipxe> echo ${net0/mac:hexhyp}
-    #52-54-00-12-34-56
-    #ipxe> echo ${net0/mac:hexraw}
-    #525400123456
-
-    # best source so far: https://gist.github.com/robinsmidsrod/2234639
-
-    $hostname = "BEAST"; # also set in ./<mac>.php (as well as domain) -> this value is probably just for completeness and never really used
-    $username = "enforge";
-    $pass = "yftK48L59TcL6";
-    # To generate crypt(3) hashes install "whois" and type mkpasswd
-    # somepass: yftK48L59TcL6
-    #$mirror = "http.us.debian.org";
-    $mirror = "deb.debian.org";
-    # recommended packackes:
-    #           openssh-server wget curl git net-tools nano
-    $packages ="openssh-server wget curl git net-tools nano";
-?>
+# preseed file for debian netinstall
 
 ## set locale
 d-i debian-installer/locale string en_US
@@ -65,7 +39,7 @@ d-i keyboard-configuration/variantcode string
 # If you want to force a hostname, regardless of what either the DHCP
 # server returns or what the reverse DNS entry for the IP is, uncomment
 # and adjust the following line.
-d-i netcfg/hostname string <?php echo "$hostname\n"; ?>
+d-i netcfg/hostname string {{ index .Values "hostname" }}
 d-i netcfg/domain string nodomain
 
 
@@ -74,7 +48,7 @@ d-i netcfg/domain string nodomain
 # If you select ftp, the mirror/country string does not need to be set.
 #d-i mirror/protocol string ftp
 d-i mirror/country string manual
-d-i mirror/http/hostname string <?php echo "$mirror\n"; ?>
+d-i mirror/http/hostname string {{ index .Values "mirror" }}
 d-i mirror/http/directory string /debian
 d-i mirror/http/proxy string
 
@@ -88,14 +62,14 @@ d-i passwd/root-login boolean false
 #d-i passwd/make-user boolean false
 
 # To create a normal user account.
-d-i passwd/user-fullname string <?php echo "$username\n"; ?>
-d-i passwd/username string <?php echo "$username\n"; ?>
+d-i passwd/user-fullname string {{ index .Values "username" }}
+d-i passwd/username string {{ index .Values "username" }}
 # Normal user's password, either in clear text
 #d-i passwd/user-password password insecure
 #d-i passwd/user-password-again password insecure
 # or encrypted using a crypt(3) hash.
 #d-i passwd/user-password-crypted password [crypt(3) hash]
-d-i passwd/user-password-crypted password <?php echo "$pass\n"; ?>
+d-i passwd/user-password-crypted password {{ index .Values "pass" }}
 
 
 ## Clock and time zone setup
@@ -288,7 +262,7 @@ tasksel tasksel/first multiselect standard
 
 # Individual additional packages to install
 #d-i pkgsel/include string openssh-server build-essential
-d-i pkgsel/include string <?php echo "$packages\n"; ?>
+d-i pkgsel/include string {{ index .Values "packages" }}
 # Whether to upgrade packages after debootstrap.
 # Allowed values: none, safe-upgrade, full-upgrade
 #d-i pkgsel/upgrade select none
@@ -329,12 +303,12 @@ d-i finish-install/reboot_in_progress note
 # packages and run commands in the target system.
 #d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 # load ssh key; disable password auth via ssh ( -> remote auth only works via certificate but local auth via password still works)
-#d-i preseed/late_command string mkdir -p /target/home/<?php echo "$username"; ?>/.ssh/; wget <?php echo "$sshurl"; ?> -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>:8888/ansible_hosts_add.php";
+#d-i preseed/late_command string mkdir -p /target/home/{{ index .Values "username" }}/.ssh/; wget "http://{{ index .Values "server" }}/key/key.pub" -O /target/home/{{ index .Values "username" }}/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>:8888/ansible_hosts_add.php";
 d-i preseed/late_command string \
-  in-target /bin/sh -c "mkdir -p /home/<?php echo "$username"; ?>/.ssh/"; \
-  wget "<?php echo "http://" . "$serverip" . "/key/key.pub"; ?>" -O /target/home/<?php echo "$username"; ?>/.ssh/authorized_keys; \
+  in-target /bin/sh -c "mkdir -p /home/{{ index .Values "username" }}/.ssh/"; \
+  wget "http://{{ index .Values "server" }}/key/key.pub"; ?>" -O /target/home/{{ index .Values "username" }}/.ssh/authorized_keys; \
   in-target /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config"; \
-  wget "http://<?php echo "$serverip"; ?>/preseed_late.php?mac=<?php echo $mac; ?>&username=<?php echo $username; ?>" -O /target/install.sh; \
+  wget "http://{{ index .Values "server" }}/preseedlate?mac={{ index .Values "mac" }}" -O /target/install.sh; \
   in-target /bin/sh /install.sh; \
   rm /target/install.sh;
 ## set grub to not load video drivers and use default (bios) ones

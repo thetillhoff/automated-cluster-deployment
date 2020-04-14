@@ -1,5 +1,9 @@
 # open todos for this project
 
+- create proper backend
+  - move from php to python
+  - as pyyaml doesn't preserve yaml comments, later on it will be required to migrate to golang
+    - but for the sake of creating a proper backend, python is fine for now (overhead of switching isn't large)
 - update readme with proper howto/troubleshooting chapters
   - make sure boot order has network before debian/disk, but have both enabled, so if network exits, the boot from disk runs
   - consolidate variables for whole project
@@ -30,6 +34,8 @@
   - to change settings (single reboot)
     efibootmgr --bootnext 0002
 - does it work with other machines too? add example to howto section
+- add https to API calls and ipxe urls
+  - probably requires building a custom ipxe image, but this should be worth it.
 - add other OS capabilites, like plain ubuntu and windows (10 & Server2019) (best would be iso-support)
 - add mgmt GUI (e.g. via browser)
   - add reboot capabilities to that GUI
@@ -40,3 +46,5 @@
     - rebooting
     - online
   - add wake-on-lan capabilities to that GUI
+  - add option to either use dnsmasq in dhcp-proxy mode or as dhcp server
+  - set hostname schema and implement automatic generating of names
