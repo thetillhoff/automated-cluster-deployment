@@ -21,7 +21,7 @@ RUN wget -q https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O /go.tar.gz &
     rm /go.tar.gz
 
 ## go get dependencies
-RUN /go/bin/go get gopkg.in/yaml.v3 && \
+RUN /go/bin/go get gopkg.in/yaml.v3
 
 ### startup command
 CMD cd /build; /go/bin/go build -o main
