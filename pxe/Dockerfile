@@ -33,9 +33,6 @@ EXPOSE 53/udp
 EXPOSE 69/udp
 EXPOSE 69/tcp
 
-## add go files
-COPY golang /build
-
 ### add custom files
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh

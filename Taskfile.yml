@@ -8,10 +8,10 @@ tasks:
   init:
     cmds:
       - task: init:sshkey
-      - cd pxe; task init
       - cd golang; task build
       - cd golang; task run
       - cp golang/main pxe/containerdata/go/main
+      - cd pxe; task init
 
 
   # create ssh-key-pair if no public key exists
