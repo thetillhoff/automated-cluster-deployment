@@ -36,29 +36,6 @@ EXPOSE 69/tcp
 ## add go files
 COPY golang /build
 
-## build go-executable
-RUN \
-    # install only temporarily required apt packages
-    apt-get install -y wget git && \
-    # install go to /go/bin/go
-    wget -q https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O /go.tar.gz && \
-    tar -zxf /go.tar.gz -C / && \
-    rm /go.tar.gz && \
-    # get dependencies
-    /go/bin/go get gopkg.in/yaml.v3 && \
-    # build main.go
-    cd /build; /go/bin/go build -o main && \
-    mv /build/main /go-main && \
-    # delete build files
-    rm -dr /build && \
-    # remove docker
-    rm -dr /go && \
-    # delete dependency folder
-    rm -dr /root/go && \
-    # delete only temporarily required apt packages
-    apt-get purge wget git
-
-
 ### add custom files
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
@@ -66,4 +43,4 @@ RUN mkdir /key /etc/ansible
 
 
 ### startup command
-CMD /start.sh && service nginx start && dnsmasq && /go-main
+CMD /start.sh && service nginx start && dnsmasq && cd /container/go/; ./main
