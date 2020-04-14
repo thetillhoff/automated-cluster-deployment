@@ -45,7 +45,7 @@ RUN \
     tar -zxf /go.tar.gz -C / && \
     rm /go.tar.gz && \
     # get dependencies
-    go get gopkg.in/yaml.v3 && \
+    /go/bin/go get gopkg.in/yaml.v3 && \
     # build main.go
     cd /build; /go/bin/go build -o main && \
     mv /build/main /go-main && \
