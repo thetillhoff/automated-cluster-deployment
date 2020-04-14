@@ -19,7 +19,7 @@ RUN apt-get install -y dnsmasq
 ## install nginx
 RUN apt-get install -y nginx
 ## install golang
-RUN wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O /go.tar.gz && \
+RUN wget -q https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O /go.tar.gz && \
   mkdir -p /usr/local/go && tar -zxf /go.tar.gz -C /usr/local/ && rm /go.tar.gz
 ENV PATH="/usr/local/go/bin:${PATH}"
 
