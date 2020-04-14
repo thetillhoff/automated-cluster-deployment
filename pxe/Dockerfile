@@ -18,10 +18,10 @@ RUN apt-get install -y net-tools wget
 RUN apt-get install -y dnsmasq
 ## install nginx
 RUN apt-get install -y nginx
-## install golang (only binary itself)
+## install golang
 RUN wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz -O ./go.tar.gz && \
-  tar xzf ./go.tar.gz && cp ./go/bin/go /usr/local/bin/ && rm -dr ./go && \
-  rm ./go.tar.gz
+  tar -zxf go.tar.gz -C /usr/local/go/ && rm -dr ./go*
+ENV PATH="/usr/local/go/bin:${PATH}"
 
 ## add nginx config file
 COPY ./nginx_site_config /etc/nginx/sites-available/site
