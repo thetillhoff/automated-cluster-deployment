@@ -442,8 +442,14 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Handler for '<SERVERADDR>/status'
+func statusHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "up")
+}
+
 func main() {
 	fmt.Print("To access this webserver access localhost:8080\n")
+	http.HandleFunc("/status", statusHandler)
 	http.HandleFunc("/default", defaultHandler)
 	http.HandleFunc("/preseed", preseedHandler)
 	http.HandleFunc("/preseedlate", preseedlateHandler)
