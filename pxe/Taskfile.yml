@@ -33,7 +33,7 @@ tasks:
     cmds:
       - cmd: docker stop pxe
         ignore_error: true
-      - docker run --name pxe --cap-add=NET_ADMIN --net=host -it -v $PWD/../ansible_hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe bash -c "/start.sh && service nginx start; echo 'run dnsmasq --no-daemon --log-queries --log-facility=/container/dnsmasq.log'; bash"
+      - docker run --name pxe --cap-add=NET_ADMIN --net=host -it --rm -v $PWD/../ansible_hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub:/key/key.pub containered_pxe bash -c "/start.sh && dnsmasq --log-queries --log-facility=/tmp/dnsmasq.log && service nginx start; echo 'run cd /container/go/; ./main'; bash"
 
   # stop all 'containered_pxe' docker-containers
   stop:

@@ -13,3 +13,8 @@ tasks:
   run:
     cmds:
       - docker run --name go --rm -v $PWD:/build containered_go
+
+  # stop all 'containered_go' docker-containers
+  stop:
+    cmds:
+      - docker stop go

@@ -35,7 +35,7 @@ tasks:
       - test -f ./key.pub
       - test -f ./pxe/containerdata/web/netboot/pxelinux.0
 
-  
+
   # reboot a host
   reboot:
     cmds:
