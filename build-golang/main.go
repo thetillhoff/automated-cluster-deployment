@@ -371,8 +371,8 @@ func preseedlateHandler(w http.ResponseWriter, r *http.Request) {
 				err = t.Execute(w, data)
 				check(err)
 
-				changeKey(mappedContent, "MAC", mac, "state", "offline") // change state to offline
-				newcontent, err := yaml.Marshal(&mappedContent)          // store map into yaml
+				changeKey(mappedContent, "MAC", mac, "state", "booting from local device") // change state to offline
+				newcontent, err := yaml.Marshal(&mappedContent)                            // store map into yaml
 				check(err)
 				writeFile("/etc/ansible/hosts", string(newcontent))
 			default: // e.g. state == 'none' or state == nil
