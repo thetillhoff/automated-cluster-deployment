@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -221,9 +220,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 				m := make(map[string]interface{})
 
 				// server
-				host, _, err := net.SplitHostPort(r.Host) // in form of <host>, <port>, <err>
-				check(err)
-				m["server"] = host // get own hostname
+				m["server"] = r.Host // get own hostname
 
 				// hostname
 				hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
@@ -283,9 +280,7 @@ func preseedHandler(w http.ResponseWriter, r *http.Request) {
 				m := make(map[string]interface{})
 
 				// server
-				host, _, err := net.SplitHostPort(r.Host) // in form of <host>, <port>, <err>
-				check(err)
-				m["server"] = host // get own hostname
+				m["server"] = r.Host // get own hostname
 
 				// mac
 				m["mac"] = mac
@@ -361,9 +356,7 @@ func preseedlateHandler(w http.ResponseWriter, r *http.Request) {
 				m := make(map[string]interface{})
 
 				// server
-				host, _, err := net.SplitHostPort(r.Host) // in form of <host>, <port>, <err>
-				check(err)
-				m["server"] = host // get own hostname
+				m["server"] = r.Host // get own hostname
 
 				// mac
 				m["mac"] = mac
