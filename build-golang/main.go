@@ -202,18 +202,18 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 				m := make(map[string]interface{})
 
 				// server
-				fmt.Print("1")
+				fmt.Print("1\n")
+				fmt.Print(r.Host)
+				fmt.Print("\n")
 				host, _, err := net.SplitHostPort(r.Host) // in form of <host>, <port>, <err>
-				fmt.Print("2")
+				fmt.Print("error occurs here:\n")
 				check(err)
-				fmt.Print("3")
+				fmt.Print("worked!\n")
 				m["server"] = host // get own hostname
 
 				// hostname
 				hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
-				fmt.Print("4")
 				check(err)
-				fmt.Print("5")
 				m["hostname"] = hostname
 
 				// execute template
