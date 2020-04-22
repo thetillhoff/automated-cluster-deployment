@@ -1,5 +1,8 @@
-pxe/containerdata/tftp/boot.ipxe
+pxe/containerdata/go/*
+pxe/containerdata/tftp/*
 pxe/containerdata/web/netboot/*
-pxe/conatinerdata/go/*
+build-ipxe/ipxe.efi
+build-ipxe/undionly.kpxe
+build-golang/main
 /key
 /key.pub
