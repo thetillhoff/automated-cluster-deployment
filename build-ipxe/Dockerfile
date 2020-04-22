@@ -6,9 +6,6 @@ LABEL maintainer="info@enforge.de"
 ## update os & add necessary apt repositories
 RUN apt-get update && \
 apt-get upgrade -y && \
-apt-get install -y software-properties-common && \
-add-apt-repository ppa:brandonsnider/cdrtools && \
-apt-get update && \
 apt-get autoremove -y && \
 apt-get clean -y && \
 rm -rf /tmp/* /var/tmp/* /var/cache/apt/* /var/cache/distfiles/*
