@@ -22,7 +22,7 @@ RUN git clone git://git.ipxe.org/ipxe.git
 
 ## configure ipxe compile settings
 ### informations taken from https://github.com/SuperClutch/docker-ipxe-build/blob/master/Dockerfile
-RUN sed -i "s%//#define POWEROFF_CMD%#define POWEROFF_CMD%"
+RUN sed -i "s%//#define POWEROFF_CMD%#define POWEROFF_CMD%" /ipxe/src/config/general.h
 
 
 ## startup command
