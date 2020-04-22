@@ -1,0 +1,20 @@
+# https://taskfile.dev
+
+version: '2'
+
+tasks:
+
+  # build the 'containered_ipxe_compiler' docker-image
+  build:
+    cmds:
+      - docker build . -t containered_ipxe_compiler
+      
+  # run the 'containered_ipxe_compiler' docker-image in detached mode
+  run:
+    cmds:
+      - docker run --name ipxe-compiler --rm -v $PWD:/build containered_ipxe_compiler
+
+  # stop all 'containered_ipxe_compiler' docker-containers
+  stop:
+    cmds:
+      - docker stop ipxe-compiler

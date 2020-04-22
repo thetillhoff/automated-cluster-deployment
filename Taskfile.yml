@@ -8,23 +8,47 @@ tasks:
   init:
     cmds:
       - task: init:sshkey
-      - cd golang; task build
-      - cd golang; task run
-      - cp golang/main pxe/containerdata/go/main
-      - cp golang/*.tmpl pxe/containerdata/go/
+      - task: init:compile-ipxe
+      - task: init:compile-go
       - cd pxe; task init
 
 
   # create ssh-key-pair if no public key exists
+  # to get ssh public key directly from github: wget https://github.com/tillhoff.keys -O key.pub
   init:sshkey:
     cmds:
-      - ./ssh-keygen.sh
+      - ./scripts/ssh-keygen.sh
     status:
       - test -f ./key.pub
-  # load ssh-public-key from github
-  #sshkeyload:
-  #  cmds:
-  #    - cd ./pxe/containerdata/public; wget https://github.com/tillhoff.keys -O key.pub
+
+
+  init:compile-ipxe:
+    cmds:
+      - cd build-ipxe; task build
+      - cd build-ipxe; task run
+      - cp build-ipxe/ipxe.efi pxe/containerdata/tftp/
+      - cp build-ipxe/undionly.kpxe pxe/containerdata/tftp/
+    sources:
+      - build-ipxe/Dockerfile
+    generates:
+      - pxe/containerdata/tftp/ipxe.efi
+      - pxe/containerdata/tftp/undionly.kpxe
+
+
+  # compile the go binary if newer version exists
+  init:compile-go:
+    cmds:
+      - cd build-golang; task build
+      - cd build-golang; task run
+      - cp build-golang/main pxe/containerdata/go/main
+      - cp build-golang/*.tmpl pxe/containerdata/go/
+    sources:
+      - build-golang/Dockerfile
+      - build-golang/*.go
+      - build-golang/*.tmpl
+    generates:
+      - pxe/containerdata/go/main
+      - pxe/containerdata/go/*.tmpl
 
 
   # run the software
