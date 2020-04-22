@@ -12,8 +12,8 @@ cpuid --ext 29 && set archl amd64 || set archl i386
 :debian-netinst
 echo Booting Debian 10.0.0 netinstaller
 sleep 1
-kernel ${boot-url}netboot/debian-installer/amd64/linux initrd=initrd.gz
-initrd ${boot-url}netboot/debian-installer/amd64/initrd.gz
+kernel ${boot-url}/netboot/debian-installer/amd64/linux initrd=initrd.gz
+initrd ${boot-url}/netboot/debian-installer/amd64/initrd.gz
 # hostname and domain are set before preseed file is loaded, so they have to be set here
 # auto=true is required to preseed locales like keyboard-layout etc.
 # the mac is not provided via template, instead it should be inserted by ipxe on the host.
