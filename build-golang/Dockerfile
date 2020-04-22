@@ -4,7 +4,7 @@ LABEL maintainer="info@enforge.de"
 
 
 ### update os
-RUN apt-get update -y && \
+RUN apt-get update && \
 apt-get upgrade -y && \
 apt-get autoremove -y && \
 apt-get clean -y && \
