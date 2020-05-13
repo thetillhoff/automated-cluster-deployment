@@ -195,58 +195,76 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, "all.hosts isn't a map.")
 			}
 		} else { // else: host is found
-			couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
+			couldbemanaged, err := findKey(mappedContent, "MAC", mac, "managed") // get state of host
 			check(err)
-			state := couldbestate.(string)
-			switch state {
-			case "waiting for provisioning":
-				t, err := template.ParseFiles("provisioning_debian" + ".tmpl")
+			managed := couldbemanaged.(bool)
+			if managed { // if host is managed
+
+				couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
 				check(err)
-				m := make(map[string]interface{})
+				state := couldbestate.(string)
+				switch state {
+				case "waiting for provisioning":
+					t, err := template.ParseFiles("provisioning_debian" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
 
-				// server
-				m["server"] = r.Host // get own hostname
+					// server
+					m["server"] = r.Host // get own hostname
 
-				// hostname
-				hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
-				check(err)
-				m["hostname"] = hostname
+					// hostname
+					hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
+					check(err)
+					m["hostname"] = hostname
 
-				// execute template
-				data := Values{
-					Values: m,
+					// execute template
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
+				case "offline":
+					t, err := template.ParseFiles("ipxe_localboot" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
+
+					// server
+					m["server"] = r.Host // get own hostname
+
+					// hostname
+					hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
+					check(err)
+					m["hostname"] = hostname
+
+					// execute template
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
+
+					changeKey(mappedContent, "MAC", mac, "state", "booting from local device") // change state to provisioning
+					newcontent, err := yaml.Marshal(&mappedContent)                            // store map into yaml
+					check(err)
+					writeFile("/etc/ansible/hosts", string(newcontent))
+				default: // e.g. state == 'none' or state == nil
+					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
+					m["message"] = "No or wrong state set for this host. Expected state was either '" + "waiting for provisioning" + "' or '" + "offline" + "', actual state was '" + state + "'."
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
 				}
-				err = t.Execute(w, data)
-				check(err)
-			case "offline":
-				t, err := template.ParseFiles("ipxe_localboot" + ".tmpl")
-				check(err)
-				m := make(map[string]interface{})
+			} else { // host is unmanaged
+				// display menu
 
-				// server
-				m["server"] = r.Host // get own hostname
-
-				// hostname
-				hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
-				check(err)
-				m["hostname"] = hostname
-
-				// execute template
-				data := Values{
-					Values: m,
-				}
-				err = t.Execute(w, data)
-				check(err)
-
-				changeKey(mappedContent, "MAC", mac, "state", "booting from local device") // change state to provisioning
-				newcontent, err := yaml.Marshal(&mappedContent)                            // store map into yaml
-				check(err)
-				writeFile("/etc/ansible/hosts", string(newcontent))
-			default: // e.g. state == 'none' or state == nil
 				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "No or wrong state set for this host. Expected state was either '" + "waiting for provisioning" + "' or '" + "offline" + "', actual state was '" + state + "'."
+				m["message"] = "This host is unmanaged. Continuing with menu."
 				data := Values{
 					Values: m,
 				}
@@ -273,56 +291,73 @@ func preseedHandler(w http.ResponseWriter, r *http.Request) {
 		if value == nil {                                     // if host not found
 			fmt.Fprintf(w, "No host with provided MAC.")
 		} else { // else: host is found
-			couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
+			couldbemanaged, err := findKey(mappedContent, "MAC", mac, "managed") // get state of host
 			check(err)
-			state := couldbestate.(string)
-			switch state {
-			case "waiting for provisioning":
-				// -> correct state
-				t, err := template.ParseFiles("preseed" + ".tmpl")
+			managed := couldbemanaged.(bool)
+			if managed { // if host is managed
+
+				couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
 				check(err)
-				m := make(map[string]interface{})
+				state := couldbestate.(string)
+				switch state {
+				case "waiting for provisioning":
+					// -> correct state
+					t, err := template.ParseFiles("preseed" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
 
-				// server
-				m["server"] = r.Host // get own hostname
+					// server
+					m["server"] = r.Host // get own hostname
 
-				// mac
-				m["mac"] = mac
+					// mac
+					m["mac"] = mac
 
-				// hostname
-				hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
-				check(err)
-				m["hostname"] = hostname
+					// hostname
+					hostname, err := findParentKey(mappedContent, "MAC", mac) // get parent of MAC-entry
+					check(err)
+					m["hostname"] = hostname
 
-				// username
-				m["username"] = "enforge"
+					// username
+					m["username"] = "enforge"
 
-				// pass
-				m["pass"] = "yftK48L59TcL6"
+					// pass
+					m["pass"] = "yftK48L59TcL6" // hash of somepass
 
-				// mirror
-				m["mirror"] = "deb.debian.org"
+					// mirror
+					m["mirror"] = "deb.debian.org"
 
-				// packages
-				m["packages"] = "openssh-server wget curl git net-tools nano"
+					// packages
+					m["packages"] = "openssh-server wget curl git net-tools nano"
 
-				// execute template
-				data := Values{
-					Values: m,
+					// execute template
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
+
+					changeKey(mappedContent, "MAC", mac, "state", "provisioning") // change state to provisioning
+					newcontent, err := yaml.Marshal(&mappedContent)               // store map into yaml
+					check(err)
+					writeFile("/etc/ansible/hosts", string(newcontent))
+				default: // e.g. state == 'none' or state == nil
+					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
+					m["message"] = "No or wrong state set for this host. Expected state was '" + "waiting for provisioning" + "', actual state was '" + state + "'."
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
 				}
-				err = t.Execute(w, data)
-				check(err)
+			} else { // host is unmanaged
+				// display menu
 
-				changeKey(mappedContent, "MAC", mac, "state", "provisioning") // change state to provisioning
-				newcontent, err := yaml.Marshal(&mappedContent)               // store map into yaml
-				check(err)
-				writeFile("/etc/ansible/hosts", string(newcontent))
-			default: // e.g. state == 'none' or state == nil
-				//TODO if in wrong state display GUI message (also for the other handlers)
 				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "No or wrong state set for this host. Expected state was '" + "waiting for provisioning" + "', actual state was '" + state + "'."
+				m["message"] = "This host is unmanaged. Continuing with menu."
 				data := Values{
 					Values: m,
 				}
@@ -349,41 +384,59 @@ func preseedlateHandler(w http.ResponseWriter, r *http.Request) {
 		if value == nil {                                     // if host not found
 			fmt.Fprintf(w, "No host with provided MAC.")
 		} else { // else: host is found
-			couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
+			couldbemanaged, err := findKey(mappedContent, "MAC", mac, "managed") // get state of host
 			check(err)
-			state := couldbestate.(string)
-			switch state {
-			case "provisioning":
+			managed := couldbemanaged.(bool)
+			if managed { // if host is managed
 
-				t, err := template.ParseFiles("preseedlate" + ".tmpl")
+				couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
 				check(err)
-				m := make(map[string]interface{})
+				state := couldbestate.(string)
+				switch state {
+				case "provisioning":
 
-				// server
-				m["server"] = r.Host // get own hostname
+					t, err := template.ParseFiles("preseedlate" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
 
-				// mac
-				m["mac"] = mac
+					// server
+					m["server"] = r.Host // get own hostname
 
-				// username
-				m["username"] = "enforge"
+					// mac
+					m["mac"] = mac
 
-				// execute template
-				data := Values{
-					Values: m,
+					// username
+					m["username"] = "enforge"
+
+					// execute template
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
+
+					changeKey(mappedContent, "MAC", mac, "state", "booting from local device") // change state to offline
+					newcontent, err := yaml.Marshal(&mappedContent)                            // store map into yaml
+					check(err)
+					writeFile("/etc/ansible/hosts", string(newcontent))
+				default: // e.g. state == 'none' or state == nil
+					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
+					m["message"] = "No or wrong state set for this host. Expected state was '" + "provisioning" + "', actual state was '" + state + "'."
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
 				}
-				err = t.Execute(w, data)
-				check(err)
+			} else { // host is unmanaged
+				// display menu
 
-				changeKey(mappedContent, "MAC", mac, "state", "booting from local device") // change state to offline
-				newcontent, err := yaml.Marshal(&mappedContent)                            // store map into yaml
-				check(err)
-				writeFile("/etc/ansible/hosts", string(newcontent))
-			default: // e.g. state == 'none' or state == nil
 				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "No or wrong state set for this host. Expected state was '" + "provisioning" + "', actual state was '" + state + "'."
+				m["message"] = "This host is unmanaged. Continuing with menu."
 				data := Values{
 					Values: m,
 				}
@@ -410,34 +463,52 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 		if value == nil {                                     // if host not found
 			fmt.Fprintf(w, "No host with provided MAC.")
 		} else { // else: host is found
-			couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
+			couldbemanaged, err := findKey(mappedContent, "MAC", mac, "managed") // get state of host
 			check(err)
-			state := couldbestate.(string)
-			switch state {
-			case "booting from local device":
+			managed := couldbemanaged.(bool)
+			if managed { // if host is managed
 
-				err := changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
+				couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
 				check(err)
+				state := couldbestate.(string)
+				switch state {
+				case "booting from local device":
 
-				fmt.Fprintln(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
-
-				ip := getUserIP(r)
-				existingip, err := findKey(mappedContent, "MAC", mac, "IP")
-				check(err)
-				if ip != existingip.(string) {
-					err := changeKey(mappedContent, "MAC", mac, "IP", ip)
+					err := changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
 					check(err)
-					fmt.Fprintln(w, "Your IP address changed from "+existingip.(string)+" to "+ip+".")
-				}
 
-				newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
-				check(err)
-				writeFile("/etc/ansible/hosts", string(newcontent))
-			default: // e.g. state == 'none' or state == nil
+					fmt.Fprintln(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
+
+					ip := getUserIP(r)
+					existingip, err := findKey(mappedContent, "MAC", mac, "IP")
+					check(err)
+					if ip != existingip.(string) {
+						err := changeKey(mappedContent, "MAC", mac, "IP", ip)
+						check(err)
+						fmt.Fprintln(w, "Your IP address changed from "+existingip.(string)+" to "+ip+".")
+					}
+
+					newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
+					check(err)
+					writeFile("/etc/ansible/hosts", string(newcontent))
+				default: // e.g. state == 'none' or state == nil
+					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
+					m["message"] = "No or wrong state set for this host. Expected state was '" + "booting from local device" + "', actual state was '" + state + "'."
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
+				}
+			} else { // host is unmanaged
+				// display menu
+
 				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "No or wrong state set for this host. Expected state was '" + "booting from local device" + "', actual state was '" + state + "'."
+				m["message"] = "This host is unmanaged. Continuing with menu."
 				data := Values{
 					Values: m,
 				}
@@ -448,14 +519,14 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Handler for '<SERVERADDR>/status'
-func statusHandler(w http.ResponseWriter, r *http.Request) {
+// Handler for '<SERVERADDR>/healthcheck'
+func healthcheckHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "up")
 }
 
 func main() {
 	fmt.Print("To access this webserver access localhost:8080\n")
-	http.HandleFunc("/status", statusHandler)
+	http.HandleFunc("/healthcheck", healthcheckHandler)
 	http.HandleFunc("/default", defaultHandler)
 	http.HandleFunc("/preseed", preseedHandler)
 	http.HandleFunc("/preseedlate", preseedlateHandler)

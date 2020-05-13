@@ -62,7 +62,7 @@ tasks:
   # run ansible-playbook
   ansible:playbook:
     cmds:
-      - cd ansible_playbook; ansible-playbook -i ../ansible_hosts ./playbook.yaml --private-key ../key -u enforge
+      - cd ansible; ansible-playbook -i ../hosts ./playbook.yaml --private-key ../key -u enforge
 
   # reboot a host
   reboot:
