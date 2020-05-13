@@ -74,3 +74,13 @@ tasks:
   ssh:
     cmds:
       - ./scripts/ssh.sh
+
+  # ssh into a host and reboot it
+  ssh:reboot:
+    cmds:
+      - ./scripts/reboot.sh
+
+  # ssh into a host and reboot via network
+  ssh:netboot:
+    cmds:
+      - ./scripts/reboot-from-network.sh
