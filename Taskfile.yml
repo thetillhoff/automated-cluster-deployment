@@ -59,6 +59,10 @@ tasks:
       - test -f ./key.pub
       - test -f ./pxe/containerdata/web/netboot/pxelinux.0
 
+  # run ansible-playbook
+  ansible:playbook:
+    cmds:
+      - cd ansible_playbook; ansible-playbook -i ../ansible_hosts ./playbook.yaml --private-key ../key -u enforge
 
   # reboot a host
   reboot:
