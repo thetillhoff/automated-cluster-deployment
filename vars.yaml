@@ -4,14 +4,8 @@ username: enforge
 passhash: yftK48L59TcL6
   # To generate crypt(3) hashes install "whois" and type mkpasswd
   # somepass: yftK48L59TcL6
-# reminder: the more ssh-key is more relevant, as only local login is enabled with this account (no ssh)
-
-#machine specific variables
-machines:
-- mac: 88-d7-f6-c8-98-67
-  hostname: BEAST
-- mac: bc-5f-f4-8b-19-ce
-  hostname: NZXT
+# reminder: the ssh-key is more relevant, as only local login is enabled with this account (no ssh)
+# Still, it is required for sudo commands after sshing
 
 # debian specific variables
 mirror: deb.debian.org
