@@ -312,4 +312,4 @@ d-i preseed/late_command string \
   in-target /bin/sh /install.sh; \
   rm /target/install.sh;
 ## set grub to not load video drivers and use default (bios) ones
-#sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"quiet nomodeset\"/'\'' /etc/default/grub
+#sed -i '\''s/^GRUB_CMDLINE_LINUX_DEFAULT=\"quiet\"/GRUB_CMDLINE_LINUX_DEFAULT=\"nomodeset\"/'\'' /etc/default/grub
