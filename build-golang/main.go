@@ -412,10 +412,21 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 			switch state {
 			case "booting from local device":
 
-				fmt.Fprintf(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
+				err := changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
+				check(err)
 
-				changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
-				newcontent, err := yaml.Marshal(&mappedContent)         // store map into yaml
+				fmt.Fprintln(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
+
+				ip := getUserIP(r)
+				existingip, err := findKey(mappedContent, "MAC", mac, "IP")
+				check(err)
+				if ip != existingip.(string) {
+					err := changeKey(mappedContent, "MAC", mac, "IP", ip)
+					check(err)
+					fmt.Fprintln(w, "Your IP address changed from "+existingip.(string)+" to "+ip+".")
+				}
+
+				newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
 				check(err)
 				writeFile("/etc/ansible/hosts", string(newcontent))
 			default: // e.g. state == 'none' or state == nil
