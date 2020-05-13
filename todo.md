@@ -1,4 +1,5 @@
 # open todos for this project
+- allow each machine to have it's own username & passhash
 - edit efibootmgr settings automatically to reboot via network
 - update readme with proper howto/troubleshooting chapters
   - make sure boot order has network before debian/disk, but have both enabled, so if network exits, the boot from disk runs
