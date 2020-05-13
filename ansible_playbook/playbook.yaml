@@ -1,0 +1,11 @@
+---
+
+- name: Test-Play
+  gather_facts: true
+  hosts: ungrouped
+  tasks:
+
+    - name: Display data
+      debug:
+        msg: "The hostname is {{ ansible_hostname }} and the IPv4 is {{ ansible_default_ipv4.address }}."
+#ansible_all_ipv4_addresses
