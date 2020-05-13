@@ -164,14 +164,18 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 			newhost["IP"] = getUserIP(r)
 			newhost["state"] = "none"
 
-			group, ok := mappedContent["nogroup"] // check if group exists
-			if !ok || group == nil {
-				// No group 'nogroup' was found.
-				group = make(map[string]interface{}, 0)
-				mappedContent["nogroup"] = group
+			all, ok := mappedContent["all"] // check if mappedContent contains key 'all'
+			if !ok || all == nil {          // if not
+				all = make(map[string]interface{}, 0) // create it
+				mappedContent["all"] = all            // and add it to mappedContent
 			}
-			if mappedGroup, ok := mappedContent["nogroup"].(map[string]interface{}); ok { // if group is map
-				mappedGroup[mac] = newhost
+			hosts, ok := all.(map[string]interface{})["hosts"] // check if all container key 'hosts'
+			if !ok || hosts == nil {                           // if not
+				hosts = make(map[string]interface{}, 0)       // create it
+				all.(map[string]interface{})["hosts"] = hosts // and add it to all
+			}
+			if hosts, ok := hosts.(map[string]interface{}); ok { // if 'hosts' is map (which it should be...)
+				hosts[mac] = newhost
 
 				newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
 				check(err)
@@ -180,15 +184,15 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "Added this host to the inventory under group 'nogroup'. If managed, reboot after state is set."
+				m["message"] = "Added this host to the inventory as ungrouped. If managed, reboot after state is set."
 				data := Values{
 					Values: m,
 				}
 				err = t.Execute(w, data)
 				check(err)
 			} else {
-				// Group 'nogroup' isn't a map
-				fmt.Fprintf(w, "key 'nogroup' isn't a map.")
+				// 'hosts' isn't a map
+				fmt.Fprintf(w, "all.hosts isn't a map.")
 			}
 		} else { // else: host is found
 			couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
@@ -412,10 +416,21 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 			switch state {
 			case "booting from local device":
 
-				fmt.Fprintf(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
+				err := changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
+				check(err)
 
-				changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
-				newcontent, err := yaml.Marshal(&mappedContent)         // store map into yaml
+				fmt.Fprintln(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
+
+				ip := getUserIP(r)
+				existingip, err := findKey(mappedContent, "MAC", mac, "IP")
+				check(err)
+				if ip != existingip.(string) {
+					err := changeKey(mappedContent, "MAC", mac, "IP", ip)
+					check(err)
+					fmt.Fprintln(w, "Your IP address changed from "+existingip.(string)+" to "+ip+".")
+				}
+
+				newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
 				check(err)
 				writeFile("/etc/ansible/hosts", string(newcontent))
 			default: // e.g. state == 'none' or state == nil
