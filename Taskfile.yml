@@ -84,3 +84,8 @@ tasks:
   ssh:netboot:
     cmds:
       - ./scripts/reboot-from-network.sh
+
+  # ssh into a host and shut it down
+  ssh:poweroff:
+    cmds:
+      - ./scripts/poweroff.sh
