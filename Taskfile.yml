@@ -38,6 +38,8 @@ tasks:
   # compile the go binary if newer version exists
   init:compile-go:
     cmds:
+      - cmd: docker stop pxe # else 'main'-binary could be in use
+        ignore_error: true
       - cd build-golang; task build
       - cd build-golang; task run
       - cp build-golang/main pxe/containerdata/go/main
@@ -55,6 +57,8 @@ tasks:
   run:
     cmds:
       - cd pxe; task run
+    deps:
+      - init
     preconditions:
       - test -f ./key.pub
       - test -f ./pxe/containerdata/web/netboot/pxelinux.0
