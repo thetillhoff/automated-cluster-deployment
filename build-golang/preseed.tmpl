@@ -149,6 +149,8 @@ d-i partman-auto/choose_recipe select unencrypted-install
 #              64 512 300% linux-swap                          \
 #                      method{ swap } format{ }                \
 #              .
+# the following lines disable warning about missing swap
+d-i partman-basicfilesystems/no_swap boolean false
 d-i partman-auto/expert_recipe string               \
     boot-root ::                                    \
 #        512 512 512 ext4                            \
@@ -163,10 +165,10 @@ d-i partman-auto/expert_recipe string               \
             $reusemethod{ }                         \
             method{ efi } format{ }                 \
         .                                           \
-        8192 8202 16384 linux-swap                  \
-            $primary{ }                             \
-            method{ swap } format{ }                \
-        .                                           \
+#        8192 8202 16384 linux-swap                  \
+#            $primary{ }                             \
+#            method{ swap } format{ }                \
+#        .                                           \
         20000 20090 -1 ext4                         \
 #            label{ os }                             \
             $primary{ }                             \
