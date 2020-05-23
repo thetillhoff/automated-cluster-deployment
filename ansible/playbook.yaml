@@ -9,3 +9,16 @@
       debug:
         msg: "The hostname is {{ ansible_hostname }} and the IPv4 is {{ ansible_default_ipv4.address }}."
 #ansible_all_ipv4_addresses
+
+    - name: get partitions
+      shell: | 
+        lsblk
+      register: reg
+    - name: show result
+      debug: var=reg.stdout_lines
+
+    - name: repartition nvme0n1
+      parted:
+        device: /dev/nvme0n1
+        number: 1
+        state: present
