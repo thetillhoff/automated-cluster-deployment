@@ -547,8 +547,7 @@ func healthcheckmanager() {
 		all := mappedContent["all"].(map[string]interface{})
 		all_hosts := all["hosts"].(map[string]interface{})
 
-		for host, hostProperties := range all_hosts {
-			///TODO: make host a map, read ip, run checkhostonline, write result back to file (only if previously online, now offline)
+		for host, hostProperties := range all_hosts { // for each host
 
 			mappedHostProperties := hostProperties.(map[string]interface{})
 			ip := mappedHostProperties["IP"].(string)
