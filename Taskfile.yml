@@ -19,7 +19,7 @@ tasks:
     cmds:
       - ./scripts/ssh-keygen.sh
     status:
-      - test -f ./key.pub
+      - test -f ./key.pub.secret
 
 
   init:compile-ipxe:
@@ -60,13 +60,13 @@ tasks:
     deps:
       - init
     preconditions:
-      - test -f ./key.pub
+      - test -f ./key.pub.secret
       - test -f ./pxe/containerdata/web/netboot/pxelinux.0
 
   # run ansible-playbook
   ansible:playbook:
     cmds:
-      - cd ansible; ansible-playbook -i ../hosts ./playbook.yaml --private-key ../key -u enforge
+      - cd ansible; ansible-playbook -i ../hosts ./playbook.yaml --private-key ../key.secret -u enforge
 
   # reboot a host
   reboot:

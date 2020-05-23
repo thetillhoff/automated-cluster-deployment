@@ -4,5 +4,3 @@ pxe/containerdata/web/netboot/*
 build-ipxe/ipxe.efi
 build-ipxe/undionly.kpxe
 build-golang/main
-/key
-/key.pub

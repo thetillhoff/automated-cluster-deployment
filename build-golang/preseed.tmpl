@@ -303,12 +303,10 @@ d-i finish-install/reboot_in_progress note
 # still a usable /target directory. You can chroot to /target and use it
 # directly, or use the apt-install and in-target commands to easily install
 # packages and run commands in the target system.
-#d-i preseed/late_command string apt-install zsh; in-target chsh -s /bin/zsh
 # load ssh key; disable password auth via ssh ( -> remote auth only works via certificate but local auth via password still works)
-#d-i preseed/late_command string mkdir -p /target/home/{{ index .Values "username" }}/.ssh/; wget "http://{{ index .Values "server" }}/key/key.pub" -O /target/home/{{ index .Values "username" }}/.ssh/authorized_keys; /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /target/etc/ssh/sshd_config"; in-target /bin/sh -c "curl http://<?php echo "$serverip"; ?>:8888/ansible_hosts_add.php";
 d-i preseed/late_command string \
   in-target /bin/sh -c "mkdir -p /home/{{ index .Values "username" }}/.ssh/"; \
-  wget "http://{{ index .Values "server" }}/key/key.pub" -O /target/home/{{ index .Values "username" }}/.ssh/authorized_keys; \
+  wget "http://{{ index .Values "server" }}/key/key.pub.secret" -O /target/home/{{ index .Values "username" }}/.ssh/authorized_keys; \
   in-target /bin/sh -c "sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config"; \
   wget "http://{{ index .Values "server" }}/preseedlate?mac={{ index .Values "mac" }}" -O /target/install.sh; \
   in-target /bin/sh /install.sh; \
