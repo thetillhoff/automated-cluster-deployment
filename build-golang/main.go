@@ -9,8 +9,10 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"regexp"
 	"text/template"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -524,12 +526,62 @@ func healthcheckHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "up")
 }
 
+// Healthchecker for provided host
+func checkhostonline(host string) bool {
+	cmd := exec.Command("ping", "-c 1", host)
+	_, err := cmd.CombinedOutput()
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+// Healthcheckmanager, runs "checkhostonline" for each host in "hosts"-file
+func healthcheckmanager() {
+	for { // while true
+		starttime := time.Now()
+
+		content := loadFile("/etc/ansible/hosts")        // load file contents
+		mappedContent := make(map[string]interface{}, 0) // create empty map
+		yaml.Unmarshal([]byte(content), &mappedContent)
+		all := mappedContent["all"].(map[string]interface{})
+		all_hosts := all["hosts"].(map[string]interface{})
+
+		for host, hostProperties := range all_hosts {
+			///TODO: make host a map, read ip, run checkhostonline, write result back to file (only if previously online, now offline)
+
+			mappedHostProperties := hostProperties.(map[string]interface{})
+			ip := mappedHostProperties["IP"].(string)
+
+			if mappedHostProperties["state"].(string) == "online" && !checkhostonline(ip) {
+				// current state is online, but it actually isn't
+				mappedHostProperties["state"] = "error"
+				all_hosts[host] = mappedHostProperties
+				all["hosts"] = all_hosts
+				mappedContent["all"] = all
+				newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
+				check(err)
+				writeFile("/etc/ansible/hosts", string(newcontent))
+			}
+		}
+
+		duration := time.Now().Sub(starttime)
+		if duration < 10*time.Second { // wait at least 10 seconds between two runs
+			time.Sleep(10*time.Second - duration)
+		}
+	}
+}
+
 func main() {
+
 	fmt.Print("To access this webserver access localhost:8080\n")
 	http.HandleFunc("/healthcheck", healthcheckHandler)
 	http.HandleFunc("/default", defaultHandler)
 	http.HandleFunc("/preseed", preseedHandler)
 	http.HandleFunc("/preseedlate", preseedlateHandler)
 	http.HandleFunc("/hostonline", hostonlineHandler)
+
+	go healthcheckmanager()
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
