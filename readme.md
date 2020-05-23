@@ -15,6 +15,7 @@ The key generation is optional at this point, as by default a public ssh key is 
 - ensure the 'to-be-pxe-booted' host's BIOS is set to boot from network first. Debian will add itself to bootmenu too during installation. Afterwards recheck the bootmenu and make sure network is still number one and debian listed second. Disable every other bootdevice. This may be done automatically in the future (#TODO).
 
 ### possible states of hosts
+
 general:
   - none
       automatic: true
@@ -33,6 +34,7 @@ general:
   - online:
       automatic: true
       previous: booting from local device
+
 special:
   - error:
       automatic: true
@@ -40,7 +42,6 @@ special:
   - maintenance:
       automatic: false
       previou: <all>
-
 
 ## TODO
 
