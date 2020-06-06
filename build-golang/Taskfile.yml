@@ -4,17 +4,12 @@ version: '2'
 
 tasks:
 
-  # build the 'containered_go_compiler' docker-image
-  build:
+  # run the go-builder and compile into binary
+  compile:
     cmds:
-      - docker build . -t containered_go_compiler
-      
-  # run the 'containered_go_compiler' docker-image in detached mode
-  run:
-    cmds:
-      - docker run --name go-compiler --rm -v $PWD:/build containered_go_compiler
+      - docker run --name go-builder --rm -v $PWD:/go/src/app tillhoff/go-builder
 
-  # stop all 'containered_go_compiler' docker-containers
+  # stop all 'go-builder' docker-containers
   stop:
     cmds:
-      - docker stop go-compiler
+      - docker stop go-builder

@@ -10,6 +10,7 @@ tasks:
       - task: init:sshkey
       - task: init:compile-ipxe
       - task: init:compile-go
+      - task: init:copy-go-tmpl
       - cd pxe; task init
 
 
@@ -40,16 +41,19 @@ tasks:
     cmds:
       - cmd: docker stop pxe # else 'main'-binary could be in use
         ignore_error: true
-      - cd build-golang; task build
-      - cd build-golang; task run
+      - cd build-golang; task compile
       - cp build-golang/main pxe/containerdata/go/main
-      - cp build-golang/*.tmpl pxe/containerdata/go/
     sources:
-      - build-golang/Dockerfile
       - build-golang/*.go
-      - build-golang/*.tmpl
     generates:
       - pxe/containerdata/go/main
+  
+  init:copy-go-tmpl:
+    cmds:
+      - cp build-golang/*.tmpl pxe/containerdata/go/
+    sources:
+      - build-golang/*.tmpl
+    generates:
       - pxe/containerdata/go/*.tmpl
 
 
