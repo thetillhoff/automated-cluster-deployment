@@ -545,11 +545,16 @@ func healthcheckmanager() {
 	for { // while true
 		starttime := time.Now()
 
-		content := loadFile("/etc/ansible/hosts")        // load file contents
-		mappedContent := make(map[string]interface{}, 0) // create empty map
-		yaml.Unmarshal([]byte(content), &mappedContent)
-		all := mappedContent["all"].(map[string]interface{})
-		all_hosts := all["hosts"].(map[string]interface{})
+		content := loadFile("/etc/ansible/hosts")              // load file contents
+		mappedContent := make(map[string]interface{}, 0)       // create empty map
+		err := yaml.Unmarshal([]byte(content), &mappedContent) // store yaml in map
+		check(err)
+
+		all := make(map[string]interface{}, 0)
+		all, _ = mappedContent["all"].(map[string]interface{})
+
+		all_hosts := make(map[string]interface{}, 0)
+		all_hosts, _ = all["hosts"].(map[string]interface{})
 
 		for host, hostProperties := range all_hosts { // for each host
 
