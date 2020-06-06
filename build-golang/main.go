@@ -154,9 +154,10 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	} else if !validMAC(mac) {
 		fmt.Fprintf(w, "Provided MAC is invalid.")
 	} else { // mac was provided correctly
-		content := loadFile("/etc/ansible/hosts")             // load file contents
-		mappedContent := make(map[string]interface{}, 0)      // create empty map
-		yaml.Unmarshal([]byte(content), &mappedContent)       // store yaml in map
+		content := loadFile("/etc/ansible/hosts")              // load file contents
+		mappedContent := make(map[string]interface{}, 0)       // create empty map
+		err := yaml.Unmarshal([]byte(content), &mappedContent) // store yaml in map
+		check(err)
 		value, _ := findKey(mappedContent, "MAC", mac, "MAC") // search for host with correct mac // don't do error tracking, as 'not found' error isn't important here
 		if value == nil {                                     // if host not found
 			newhost := make(map[string]interface{})
@@ -286,9 +287,10 @@ func preseedHandler(w http.ResponseWriter, r *http.Request) {
 	} else if !validMAC(mac) {
 		fmt.Fprintf(w, "Provided MAC is invalid.")
 	} else { // mac was provided correctly
-		content := loadFile("/etc/ansible/hosts")             // load file contents
-		mappedContent := make(map[string]interface{}, 0)      // create empty map
-		yaml.Unmarshal([]byte(content), &mappedContent)       // store yaml in map
+		content := loadFile("/etc/ansible/hosts")              // load file contents
+		mappedContent := make(map[string]interface{}, 0)       // create empty map
+		err := yaml.Unmarshal([]byte(content), &mappedContent) // store yaml in map
+		check(err)
 		value, _ := findKey(mappedContent, "MAC", mac, "MAC") // search for host with correct mac // don't do error tracking, as 'not found' error isn't important here
 		if value == nil {                                     // if host not found
 			fmt.Fprintf(w, "No host with provided MAC.")
@@ -379,9 +381,10 @@ func preseedlateHandler(w http.ResponseWriter, r *http.Request) {
 	} else if !validMAC(mac) {
 		fmt.Fprintf(w, "Provided MAC is invalid.")
 	} else { // mac was provided correctly
-		content := loadFile("/etc/ansible/hosts")             // load file contents
-		mappedContent := make(map[string]interface{}, 0)      // create empty map
-		yaml.Unmarshal([]byte(content), &mappedContent)       // store yaml in map
+		content := loadFile("/etc/ansible/hosts")              // load file contents
+		mappedContent := make(map[string]interface{}, 0)       // create empty map
+		err := yaml.Unmarshal([]byte(content), &mappedContent) // store yaml in map
+		check(err)
 		value, _ := findKey(mappedContent, "MAC", mac, "MAC") // search for host with correct mac // don't do error tracking, as 'not found' error isn't important here
 		if value == nil {                                     // if host not found
 			fmt.Fprintf(w, "No host with provided MAC.")
@@ -458,9 +461,10 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 	} else if !validMAC(mac) {
 		fmt.Fprintf(w, "Provided MAC is invalid.")
 	} else { // mac was provided correctly
-		content := loadFile("/etc/ansible/hosts")             // load file contents
-		mappedContent := make(map[string]interface{}, 0)      // create empty map
-		yaml.Unmarshal([]byte(content), &mappedContent)       // store yaml in map
+		content := loadFile("/etc/ansible/hosts")              // load file contents
+		mappedContent := make(map[string]interface{}, 0)       // create empty map
+		err := yaml.Unmarshal([]byte(content), &mappedContent) // store yaml in map
+		check(err)
 		value, _ := findKey(mappedContent, "MAC", mac, "MAC") // search for host with correct mac // don't do error tracking, as 'not found' error isn't important here
 		if value == nil {                                     // if host not found
 			fmt.Fprintf(w, "No host with provided MAC.")
