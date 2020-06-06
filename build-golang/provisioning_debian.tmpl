@@ -16,7 +16,6 @@ kernel ${boot-url}/netboot/debian-installer/amd64/linux initrd=initrd.gz
 initrd ${boot-url}/netboot/debian-installer/amd64/initrd.gz
 # hostname and domain are set before preseed file is loaded, so they have to be set here
 # auto=true is required to preseed locales like keyboard-layout etc.
-# the mac is not provided via template, instead it should be inserted by ipxe on the host.
-imgargs linux initrd=initrd.gz auto=true fb=false url=${boot-url}/preseed?mac=${net0/mac:hexhyp} hostname={{ index .Values "hostname" }} domain=nodomain
+imgargs linux initrd=initrd.gz auto=true fb=false url=${boot-url}/preseed?mac={{ index .Values "hostname" }} hostname={{ index .Values "hostname" }} domain=nodomain
 boot || goto failed
 goto start
