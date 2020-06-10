@@ -94,12 +94,20 @@ d-i clock-setup/ntp boolean true
 # This is only honoured if partman-auto/method (below) is not set.
 #d-i partman-auto/init_automatically_partition select biggest_free
 
+## get first non-usb drive
+# ls -l /dev/sd[a-z] returns a list of devices (long form)
+# grep -v usb removes lines that contain usb
+# grep -o '[^/]*$' splits on '/' and returns last element
+# head -n1 returns only the first element of the list
+d-i partman/early_command \
+    string debconf-set partman-auto/disk /dev/$(ls -l /sys/block/[sh]d[a-z] | grep -v usb | grep -o '[^/]*$' | head -n1)
+
 # Alternatively, you may specify a disk to partition. If the system has only
 # one disk the installer will default to using that, but otherwise the device
 # name must be given in traditional, non-devfs format (so e.g. /dev/sda
 # and not e.g. /dev/discs/disc0/disc).
 # For example, to use the first SCSI/SATA hard disk:
-d-i partman-auto/disk string /dev/sda
+#d-i partman-auto/disk string /dev/sda
 # In addition, you'll need to specify the method to use.
 # The presently available methods are:
 # - regular: use the usual partition types for your architecture
