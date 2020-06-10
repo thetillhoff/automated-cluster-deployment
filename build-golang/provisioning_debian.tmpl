@@ -16,6 +16,18 @@ kernel ${boot-url}/netboot/debian-installer/amd64/linux initrd=initrd.gz
 initrd ${boot-url}/netboot/debian-installer/amd64/initrd.gz
 # hostname and domain are set before preseed file is loaded, so they have to be set here
 # auto=true is required to preseed locales like keyboard-layout etc.
-imgargs linux initrd=initrd.gz auto=true fb=false url=${boot-url}/preseed?mac={{ index .Values "hostname" }} hostname={{ index .Values "hostname" }} domain=nodomain
-boot || goto failed
-goto start
+# hw-detect/load_media=false is required so no question on additional cds is asked
+# hw-detect/load_firmware=false is required so no question on non-free firmware is asked
+# interface=auto is required so first nic is auto-selected
+# fb=false disables framebuffer, which sometimes makes problems
+imgargs linux initrd=initrd.gz auto=true hw-detect/load_media=false hw-detect/load_firmware=false interface=auto fb=false url=${boot-url}/preseed?mac={{ index .Values "hostname" }} hostname={{ index .Values "hostname" }} domain=nodomain
+boot --timeout 10 || goto failed
+goto shell
+
+:shell
+echo Type 'exit' to get back to the menu
+shell
+
+:failed
+echo Booting failed, dropping to shell
+goto shell
