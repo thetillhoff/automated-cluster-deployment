@@ -26,6 +26,7 @@ tasks:
     cmds:
       - cmd: docker stop pxe
         ignore_error: true
+      - sleep 1
       - docker run --name pxe --cap-add=NET_ADMIN --net=host -d --rm -v $PWD/../hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub.secret:/key/key.pub.secret containered_pxe
 
   # run the 'containered_pxe' docker-image in debug mode
