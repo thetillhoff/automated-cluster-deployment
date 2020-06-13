@@ -10,11 +10,11 @@ After =         network.target network-online.target
 [Service]
 Type =          simple
 ExecStartPre =  /bin/sleep 10
-ExecStart =     /firstboot.sh
+ExecStart =     /boot.sh
 
 [Install]
 WantedBy =      default.target
-' > /etc/systemd/system/firstboot.service
+' > /etc/systemd/system/boot.service
 
 
 echo '#!/bin/bash
@@ -26,13 +26,8 @@ chown -R {{ index .Values "username" }}:{{ index .Values "username" }} /home/{{ 
 curl -s "http://{{ index .Values "server" }}/hostonline?mac={{ index .Values "mac" }}" > /home/{{ index .Values "username" }}/ansible_ready 2> /home/{{ index .Values "username" }}/error
 # delete empty files afterwards
 find /home/{{ index .Values "username" }}/ -type f -empty -delete
-
-# remove firstboot files
-systemctl disable firstboot
-rm /etc/systemd/system/firstboot.service
-rm /firstboot.sh
-' > /firstboot.sh
+' > /boot.sh
 
 
-chmod +x /firstboot.sh
-systemctl enable firstboot
+chmod +x /boot.sh
+systemctl enable boot
