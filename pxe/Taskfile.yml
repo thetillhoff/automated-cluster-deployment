@@ -10,33 +10,33 @@ tasks:
       - task: build
       - task: init:netboot
 
-  # build the 'containered_pxe' docker-image
+  # build the 'pxe' docker-image
   build:
     cmds:
-      - docker build . -t containered_pxe
+      - docker build . -t pxe
 
-  # force the rebuild of the 'containered_pxe' docker-image
+  # force the rebuild of the 'pxe' docker-image
   rebuild:
     cmds:
-      - docker build . -t containered_pxe --no-cache
+      - docker build . -t pxe --no-cache
 
 
-  # run the 'containered_pxe' docker-image in detached mode
+  # run the 'pxe' docker-image in detached mode
   run:
     cmds:
       - cmd: docker stop pxe
         ignore_error: true
       - sleep 1
-      - docker run --name pxe --cap-add=NET_ADMIN --net=host -d --rm -v $PWD/../hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub.secret:/key/key.pub.secret containered_pxe
+      - docker run --name pxe --cap-add=NET_ADMIN --net=host -d --rm -v $PWD/../hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub.secret:/key/key.pub.secret pxe
 
-  # run the 'containered_pxe' docker-image in debug mode
+  # run the 'pxe' docker-image in debug mode
   run:debug:
     cmds:
       - cmd: docker stop pxe
         ignore_error: true
-      - docker run --name pxe --cap-add=NET_ADMIN --net=host -it --rm -v $PWD/../hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub.secret:/key/key.pub.secret containered_pxe bash -c "/start.sh && dnsmasq -C /etc/dnsmasq.conf -u root --log-queries --log-facility=/tmp/dnsmasq.log && service nginx start; echo 'run cd /container/go/; ./main'; bash"
+      - docker run --name pxe --cap-add=NET_ADMIN --net=host -it --rm -v $PWD/../hosts:/etc/ansible/hosts -v $PWD/containerdata:/container -v $PWD/../key.pub.secret:/key/key.pub.secret pxe bash -c "/start.sh && dnsmasq -C /etc/dnsmasq.conf -u root --log-queries --log-facility=/tmp/dnsmasq.log && service nginx start; echo 'run cd /container/go/; ./main'; bash"
 
-  # stop all 'containered_pxe' docker-containers
+  # stop all 'pxe' docker-containers
   stop:
     cmds:
       - docker stop pxe
