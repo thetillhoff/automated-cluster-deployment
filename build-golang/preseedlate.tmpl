@@ -1,33 +1,58 @@
 #!/bin/bash
 
-# create firstboot.service file
+# create online.service file
 echo '[Unit]
-Description =   Run script at first startup after all services are loaded
-Wants =         network-online.target
-After =         network.target network-online.target
-#                ^->former for compatibility, later actual target
+Description =     Run a script at startup after all services are loaded and another at shutdown
+Requires =        network-online.target
+After =           network.target network-online.target
 
 [Service]
-Type =          simple
-ExecStartPre =  /bin/sleep 10
-ExecStart =     /boot.sh
+Type =            oneshot
+ExecStartPre =    /bin/sleep 10
+ExecStart =       /online.sh
+RemainAfterExit = true
 
 [Install]
 WantedBy =      default.target
-' > /etc/systemd/system/boot.service
+' > /etc/systemd/system/online.service
 
+# create offline.service file
+echo '[Unit]
+Description =     Run a script at startup after all services are loaded and another at shutdown
+Requires =        network-online.target
+After =           network.target network-online.target
 
+[Service]
+Type =            oneshot
+RemainAfterExit = true
+ExecStop =        /offline.sh
+
+[Install]
+WantedBy =      default.target
+' > /etc/systemd/system/offline.service
+
+# create online script
 echo '#!/bin/bash
 
 # make sure permissions are correct on ~/.ssh folder
 chown -R {{ index .Values "username" }}:{{ index .Values "username" }} /home/{{ index .Values "username" }}/.ssh
 
 # add self to ansible hosts list of pxe server and leave debug message on success and error
-curl -s "http://{{ index .Values "server" }}/hostonline?mac={{ index .Values "mac" }}" > /home/{{ index .Values "username" }}/ansible_ready 2> /home/{{ index .Values "username" }}/error
+curl -s "http://{{ index .Values "server" }}/hostonline?mac={{ index .Values "mac" }}" > /home/{{ index .Values "username" }}/log-state 2> /home/{{ index .Values "username" }}/error-online
 # delete empty files afterwards
 find /home/{{ index .Values "username" }}/ -type f -empty -delete
-' > /boot.sh
+' > /online.sh
+
+# create offline script
+echo '#!/bin/bash
+
+#  self to ansible hosts list of pxe server and leave debug message on success and error
+curl -s "http://{{ index .Values "server" }}/hostoffline?mac={{ index .Values "mac" }}" > /home/{{ index .Values "username" }}/log-state 2> /home/{{ index .Values "username" }}/error-offline
+# delete empty files afterwards
+find /home/{{ index .Values "username" }}/ -type f -empty -delete
+' > /offline.sh
 
 
-chmod +x /boot.sh
-systemctl enable boot
+chmod +x /online.sh /offline.sh
+systemctl enable online
+systemctl enable offline

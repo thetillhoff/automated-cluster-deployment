@@ -46,6 +46,7 @@ tasks:
     sources:
       - build-golang/*.go
     generates:
+      - build-golang/main
       - pxe/containerdata/go/main
   
   init:copy-go-tmpl:

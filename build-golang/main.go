@@ -184,7 +184,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 				check(err)
 				writeFile("/etc/ansible/hosts", string(newcontent))
 
-				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+				t, err := template.ParseFiles("error" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
 				m["message"] = "Added this host to the inventory as ungrouped. If managed, reboot after state is set."
@@ -251,7 +251,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 					check(err)
 					writeFile("/etc/ansible/hosts", string(newcontent))
 				default: // e.g. state == 'none' or state == nil
-					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					t, err := template.ParseFiles("error" + ".tmpl")
 					check(err)
 					m := make(map[string]interface{})
 					m["message"] = "No or wrong state set for this host. Expected state was either '" + "waiting for provisioning" + "' or '" + "offline" + "', actual state was '" + state + "'."
@@ -345,7 +345,7 @@ func preseedHandler(w http.ResponseWriter, r *http.Request) {
 					check(err)
 					writeFile("/etc/ansible/hosts", string(newcontent))
 				default: // e.g. state == 'none' or state == nil
-					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					t, err := template.ParseFiles("error" + ".tmpl")
 					check(err)
 					m := make(map[string]interface{})
 					m["message"] = "No or wrong state set for this host. Expected state was '" + "waiting for provisioning" + "', actual state was '" + state + "'."
@@ -358,10 +358,10 @@ func preseedHandler(w http.ResponseWriter, r *http.Request) {
 			} else { // host is unmanaged
 				// display menu
 
-				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+				t, err := template.ParseFiles("error" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "This host is unmanaged. Continuing with menu."
+				m["message"] = "This host is unmanaged."
 				data := Values{
 					Values: m,
 				}
@@ -425,7 +425,7 @@ func preseedlateHandler(w http.ResponseWriter, r *http.Request) {
 					check(err)
 					writeFile("/etc/ansible/hosts", string(newcontent))
 				default: // e.g. state == 'none' or state == nil
-					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					t, err := template.ParseFiles("error" + ".tmpl")
 					check(err)
 					m := make(map[string]interface{})
 					m["message"] = "No or wrong state set for this host. Expected state was '" + "provisioning" + "', actual state was '" + state + "'."
@@ -438,10 +438,10 @@ func preseedlateHandler(w http.ResponseWriter, r *http.Request) {
 			} else { // host is unmanaged
 				// display menu
 
-				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+				t, err := template.ParseFiles("error" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "This host is unmanaged. Continuing with menu."
+				m["message"] = "This host is unmanaged."
 				data := Values{
 					Values: m,
 				}
@@ -483,7 +483,7 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 					err := changeKey(mappedContent, "MAC", mac, "state", "online") // change state to provisioning
 					check(err)
 
-					fmt.Fprintln(w, "Welcome! Changed 'state=online' for your host set in the inventory.")
+					fmt.Fprintln(w, "Welcome! Changed 'state=online' for your host in the inventory file.")
 
 					ip := getUserIP(r)
 					existingip, err := findKey(mappedContent, "MAC", mac, "IP")
@@ -498,7 +498,7 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 					check(err)
 					writeFile("/etc/ansible/hosts", string(newcontent))
 				default: // e.g. state == 'none' or state == nil
-					t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+					t, err := template.ParseFiles("error" + ".tmpl")
 					check(err)
 					m := make(map[string]interface{})
 					m["message"] = "No or wrong state set for this host. Expected state was '" + "booting from local device" + "', actual state was '" + state + "'."
@@ -511,10 +511,83 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 			} else { // host is unmanaged
 				// display menu
 
-				t, err := template.ParseFiles("ipxe_menu" + ".tmpl")
+				t, err := template.ParseFiles("error" + ".tmpl")
 				check(err)
 				m := make(map[string]interface{})
-				m["message"] = "This host is unmanaged. Continuing with menu."
+				m["message"] = "This host is unmanaged."
+				data := Values{
+					Values: m,
+				}
+				err = t.Execute(w, data)
+				check(err)
+			}
+		}
+	}
+}
+
+// Handler for '<SERVERADDR>/hostoffline'
+func hostofflineHandler(w http.ResponseWriter, r *http.Request) {
+
+	mac, ok := GETsingle(r, "mac")
+	if !ok {
+		fmt.Fprintf(w, mac)
+	} else if !validMAC(mac) {
+		fmt.Fprintf(w, "Provided MAC is invalid.")
+	} else { // mac was provided correctly
+		content := loadFile("/etc/ansible/hosts")              // load file contents
+		mappedContent := make(map[string]interface{}, 0)       // create empty map
+		err := yaml.Unmarshal([]byte(content), &mappedContent) // store yaml in map
+		check(err)
+		value, _ := findKey(mappedContent, "MAC", mac, "MAC") // search for host with correct mac // don't do error tracking, as 'not found' error isn't important here
+		if value == nil {                                     // if host not found
+			fmt.Fprintf(w, "No host with provided MAC.")
+		} else { // else: host is found
+			couldbemanaged, err := findKey(mappedContent, "MAC", mac, "managed") // get state of host
+			check(err)
+			managed := couldbemanaged.(bool)
+			if managed { // if host is managed
+
+				couldbestate, err := findKey(mappedContent, "MAC", mac, "state") // get state of host
+				check(err)
+				state := couldbestate.(string)
+				switch state {
+				case "online":
+
+					err := changeKey(mappedContent, "MAC", mac, "state", "offline") // change state to provisioning
+					check(err)
+
+					fmt.Fprintln(w, "Goodbye! Changed 'state=offline' for your host in the inventory file.")
+
+					ip := getUserIP(r)
+					existingip, err := findKey(mappedContent, "MAC", mac, "IP")
+					check(err)
+					if ip != existingip.(string) {
+						err := changeKey(mappedContent, "MAC", mac, "IP", ip)
+						check(err)
+						fmt.Fprintln(w, "Your IP address changed from "+existingip.(string)+" to "+ip+".")
+					}
+
+					newcontent, err := yaml.Marshal(&mappedContent) // store map into yaml
+					check(err)
+					writeFile("/etc/ansible/hosts", string(newcontent))
+				default: // e.g. state == 'none' or state == nil
+					t, err := template.ParseFiles("error" + ".tmpl")
+					check(err)
+					m := make(map[string]interface{})
+					m["message"] = "No or wrong state set for this host. Expected state was '" + "online" + "', actual state was '" + state + "'."
+					data := Values{
+						Values: m,
+					}
+					err = t.Execute(w, data)
+					check(err)
+				}
+			} else { // host is unmanaged
+				// display menu
+
+				t, err := template.ParseFiles("error" + ".tmpl")
+				check(err)
+				m := make(map[string]interface{})
+				m["message"] = "This host is unmanaged."
 				data := Values{
 					Values: m,
 				}
@@ -526,6 +599,7 @@ func hostonlineHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handler for '<SERVERADDR>/healthcheck'
+// returns up, if this application is running
 func healthcheckHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "up")
 }
@@ -588,6 +662,7 @@ func main() {
 	http.HandleFunc("/preseed", preseedHandler)
 	http.HandleFunc("/preseedlate", preseedlateHandler)
 	http.HandleFunc("/hostonline", hostonlineHandler)
+	http.HandleFunc("/hostoffline", hostofflineHandler)
 
 	go healthcheckmanager()
 
