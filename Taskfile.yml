@@ -15,7 +15,7 @@ tasks:
 
 
   # create ssh-key-pair if no public key exists
-  # to get ssh public key directly from github: wget https://github.com/tillhoff.keys -O key.pub
+  # to get ssh public key directly from github: wget https://github.com/thetillhoff.keys -O key.pub
   init:sshkey:
     cmds:
       - ./scripts/ssh-keygen.sh

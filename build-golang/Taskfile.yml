@@ -7,7 +7,7 @@ tasks:
   # run the go-builder and compile into binary
   compile:
     cmds:
-      - docker run --name go-builder --rm -v $PWD:/go/src/app tillhoff/go-builder
+      - docker run --name go-builder --rm -v $PWD:/go/src/app thetillhoff/go-builder
 
   # stop all 'go-builder' docker-containers
   stop:
