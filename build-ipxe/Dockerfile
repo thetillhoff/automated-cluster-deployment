@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:bookworm
 
 LABEL maintainer="info@enforge.de"
 
